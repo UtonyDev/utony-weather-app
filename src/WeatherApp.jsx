@@ -627,7 +627,7 @@ const getPhaseInfo = (phase) => {
                 <div className="search z-50 relative top-3 p-1 grid grid-auto w-full">
                     <motion.input type="search"
                      value={query} 
-                     className='search-icon search-bar justify-self-center w-11/12 text-md row-span-auto bg-[#EBEBEB] p-3 rounded-full focus:rounded-full focus:scale-[1.025] focus:bg-[#F5F5F5] focus-within:outline-none border border-gray-200  z-[50]' 
+                     className='search-icon search-bar justify-self-center w-11/12 text-md row-span-auto bg-[#E2E850] p-3 rounded-full focus:rounded-full focus:scale-[1.025] focus:bg-[#F5F5F5] focus-within:outline-none border border-[#CBD5E1] text-[#0F172A]  z-[50]' 
                      name="place" id="place"
                      onChange={InputValChange}
                      onFocus={joinSuggestions()}
@@ -710,7 +710,7 @@ const getPhaseInfo = (phase) => {
                   />
         </div>
 
-            <span className="menu-butn absolute top-[13%] left[0] translate-x-[82.5vw] translate-y-full text-sm z-50" onClick={showSetting}
+            <span className="menu-butn absolute top-[13%] right-[2.5%] translate-y-full text-sm z-50" onClick={showSetting}
             >
                     <img src="/icons8-menu-vertical-24.png" 
                     className='active:opacity-70 bg-transparent p-1 rounded-full size-fit'
@@ -718,7 +718,7 @@ const getPhaseInfo = (phase) => {
                 </span>
 
             <div id='w-menu-card' 
-                className="w-menu-card hide-card absolute top-[10%] right-[10%] translate-y-full border-2 border-gray-200 bg-[#ebebeb] w-fit h-fit px-2 py-3 rounded z-[50]"
+                className="w-menu-card hide-card absolute top-[10%] right-[5%] translate-y-full border-2 border-gray-200 bg-[#ebebeb] w-fit h-fit px-2 py-3 rounded z-[50]"
                 onLoad={hideSettings}
                 >
                 <div className="pref-units">

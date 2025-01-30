@@ -56,7 +56,7 @@ function LocationForm({ fetchData, convertCoordinates }) {
         <div className=' place-content-center relative top-[20%] grid'>
 
 <div className="form-container grid sm:w-[90vw] sm:h-[60vh] md:w-[30vw] md:h-fit bg-white shadow-lg rounded-xl py-2 gap-2">
-    <img src="/icons8-location-24.png" alt="location icon" className='block place-self-center'/>
+    <img src="/icons8-place-marker-48.png" alt="location icon" className='block place-self-center'/>
     <label className="text-[#0a0a0a] place-self-center text-2xl flex items-center gap-2">
         Enter Location
     </label>
