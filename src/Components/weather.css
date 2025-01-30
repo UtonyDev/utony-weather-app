@@ -1,0 +1,37 @@
+@import "tailwindcss";
+
+body {
+font-family: "Roboto", sans-serif;
+font-weight: 300;
+margin: 0;
+box-sizing: border-box;
+}
+
+.input {
+    visibility: visible !important;
+}
+
+svg.reset {
+    fill: grey;
+    stroke: transparent;
+    box-shadow: none;
+}
+
+
+.spinner {
+    width: 100px;
+    height: 100px;
+    border: 5px solid rgba(0, 128, 128, 0.2); /* Light teal border */
+    border-top: 5px solid teal; /* Teal border */
+    border-radius: 50%;
+    animation: spin .6s linear infinite;
+  }
+  
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }

@@ -1,0 +1,18 @@
+@import "tailwindcss";
+
+
+.search-icon {
+    padding: 10px 10px 10px 40px; /* Add padding to the left to leave space for the icon */
+    font-size: 1em;
+    background: url("/icons8-search-location-48.png")
+      no-repeat 12px center;
+    background-size: 1.2em; /* Adjust icon size */
+  }
+
+.hide-card {
+  display: none;
+}
+.show-card {
+  display: block;
+}
+
