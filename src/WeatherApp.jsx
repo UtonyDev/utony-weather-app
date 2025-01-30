@@ -115,6 +115,10 @@ function WeatherApp() {
       // Check if there is any data in the cache
       if (Object.keys(cachedData).length > 0) {
           const latestKey = Object.keys(cachedData)[Object.keys(cachedData).length - 1]; // Get the last added key
+          console.log(latestKey);
+          const latestKeys = latestKey.split(':');
+          var latestCountry = latestKeys[latestKeys.length - 1];
+          
           let latestData = cachedData[latestKey];
   
           setData(latestData); // Use the most recent cached data for rendering
@@ -199,7 +203,12 @@ function WeatherApp() {
 
   // Function to fetch weather data.
   const fetchData = async (city, country) => {
-      const cacheKey = `${city}:${country}`;
+    const countryitem = country;
+    console.log(countryitem);
+    let storedCountry;
+    localStorage.setItem(storedCountry, JSON.stringify(countryitem));
+
+        let cacheKey = `${city}:${country}`;
       const weatherCacheKey = 'weatherCache';
       if (userUnitPreference) {
           checkCountry(userUnitPreference);
@@ -211,12 +220,13 @@ function WeatherApp() {
       
       // Retrieve the cache object from localStorage
       const cachedData = JSON.parse(localStorage.getItem(weatherCacheKey)) || {};
-      console.log('Cache key:', cacheKey);
+     
   
       // Check if data for the given city-country pair exists in the cache
       if (cachedData[cacheKey]) {
           const jsonCachedData = cachedData[cacheKey]; 
-          setData(jsonCachedData); // Set the state to cached data
+          setData(jsonCachedData); // Set the state to cached data 
+          console.log('Cache key:', cacheKey);
           console.log('Using cached weather data:', jsonCachedData);
       } else {
           console.log('Data not found in cache... fetching from server');
@@ -269,7 +279,7 @@ function WeatherApp() {
       .then(data => {
           if (data.results.length > 0) {
           const city = `${data.results[dayIndex].components._normalized_city}, ${data.results[dayIndex].components.state},`;
-          const country = `${data.results[dayIndex].components.country}`;
+          let country = `${data.results[dayIndex].components.country}`;
           console.log(country);
           checkCountry(country);
 
@@ -528,16 +538,22 @@ const getPhaseInfo = (phase) => {
   if (phase > 0.75 && phase < 1) { return `Waning crescent`};
 }
  
+ 
   const showSetting = () => {
       const settingElement = document.querySelector('#w-menu-card');
       if (!settingElement) return;
+        
+      let storedCountry;
+      const globalCountry = localStorage.getItem(storedCountry);
+      const parseGlobalCountry = globalCountry.replace(/"/g, '');
+      console.log(parseGlobalCountry);
       if (userUnitPreference) {
           checkCountry(userUnitPreference);
           console.log('using user pref');
       } else {
-          checkCountry();
+          checkCountry(parseGlobalCountry);
           console.log('using location');
-      }
+      };
   
       if (settingElement.classList.contains('hide-card')) {
           settingElement.classList.remove('hide-card');
@@ -620,14 +636,15 @@ const getPhaseInfo = (phase) => {
     id='target'>
         {data && (
             <>
-            <div id="weather-app" className='grid justify-items-center grid-rows-auto grid-col-2 gap-5 relative bg-[#F9F9FB] z-20' 
+            <div id="weather-app" className='grid justify-items-center grid-rows-auto grid-col-2 gap-5 relative bg-[rgba(249,249,251,.3)] z-20' 
                 onLoad={defaultTempUnit}
                 onClick={hideSettings}
              >
                 <div className="search z-50 relative top-3 p-1 grid grid-auto w-full">
                     <motion.input type="search"
                      value={query} 
-                     className='search-icon search-bar justify-self-center w-11/12 text-md row-span-auto bg-[#E2E850] p-3 rounded-full focus:rounded-full focus:scale-[1.025] focus:bg-[#F5F5F5] focus-within:outline-none border border-[#CBD5E1] text-[#0F172A]  z-[50]' 
+                     className='search-icon search-bar justify-self-center w-11/12 text-md row-span-auto bg-[#E2E850] p-3 rounded-full focus:rounded-full focus:scale-[1.025] focus:bg-[#F5F5F5] focus-within:outline-none border border-neutral-300 focus:border-neutral-400 text-neutral-950 text-[17px]
+                     tracking-[0.0125] font-normal z-[50]' 
                      name="place" id="place"
                      onChange={InputValChange}
                      onFocus={joinSuggestions()}
@@ -639,9 +656,9 @@ const getPhaseInfo = (phase) => {
                      placeholder={address} />
 
                 {suggestions.length > 0 && (
-                    <ul className=' absolute justify-self-center w-11/12 top-12 text-zinc-800 bg-[#f5f5f5] border-2 scale-[1.005] border-gray-200 rounded-b-2xl overflow-y-clip z-[50]'>
+                    <ul className=' absolute justify-self-center w-11/12 top-[3.15rem] text-zinc-800 bg-neutral-100 border-1 border-neutral-400 rounded-b-2xl overflow-y-clip z-[50]'>
                         {suggestions.map((suggestion, index) => (
-                            <li key={index} className={`p-1 text-neutral-950 text-sm  hover:opacity-70 `} onClick={
+                            <li key={index} className={`p-1 text-neutral-950 text-[17px] font-normal hover:opacity-70 `} onClick={
                                  () => {
                                     setQuery(suggestion);
                                     setSuggestions([]);
@@ -663,12 +680,12 @@ const getPhaseInfo = (phase) => {
                 <HourlyList 
                   data={data} dayIndex={dayIndex} indexHour={indexHour}
                   defaultTempUnit={defaultTempUnit} hourTimeRef={hourInfoRef}
-                  hourInfoRef={hourInfoRef}
+                  hourInfoRef={hourInfoRef} showCurrentHour={showCurrentHour}
                   tempSymbol={tempSymbol} iconBasePath={iconBasePath} 
                   hourMinFormat={hourMinFormat}/>
 
-                <div className="daily-forecast forecast grid grid-rows-1 w-11/12 bg-[#EBEBEB] p-3 mt-1 mb mx-3 shadow-md rounded-lg">
-                    <div className="desc text-md font-normal text-[#505058] py-1"> Daily Forecast </div>
+                <div className="daily-forecast forecast grid grid-rows-1 w-11/12 bg-[rgba(229,229,229,.5)] p-3 mt-1 mb mx-3 shadow-md rounded-lg">
+                    <div className="desc text-xl font-medium text-neutral-600 py-2"> Daily Forecast </div>
 
                     <ul className=" max-h-auto overflow-y-scroll">
                         {data.days.slice(0, 10).map((day, index) => (
@@ -681,10 +698,10 @@ const getPhaseInfo = (phase) => {
                                     setDayPage(true);
                                     updateDayIndex(index);
                                 }}>
-                                <p className='inline-block text-[#505058] text-sm h-fit' ref={(el) => (dayRef.current[index]) = el }>{formatFullDay(day.datetime)}</p>
+                                <p className='inline-block text-[#505058] font-sans font-normal tracking-wide text-base h-fit' ref={(el) => (dayRef.current[index]) = el }>{formatFullDay(day.datetime)}</p>
                                 <span className="dayInfo justify-self-end ">
-                                <p className='inline-block text-[#008080] text-sm px-2'>{defaultTempUnit(day.temp)}{tempSymbol(symb)}</p>
-                                <p className='inline-block text-zinc-700 text-sm px-2'>{Math.round(day.precipprob)}%</p>
+                                <p className='inline-block text-[#008080] font-sans font-medium tracking-wide text-base  px-2'>{defaultTempUnit(day.temp)}{tempSymbol(symb)}</p>
+                                <p className='inline-block text-[#505058] font-sans font-normal tracking-wide text-base px-2'>{Math.round(day.precipprob)}%</p>
                                 <p className="inline-block"> <img src={`${iconBasePath}${day.icon}.png`} alt="" className="src size-5" /> </p>
                                 </span>
                             </motion.li>

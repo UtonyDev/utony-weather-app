@@ -7,22 +7,24 @@ const CurrentConditions = ({
     data, dayIndex, indexHour, defaultTempUnit,
     hourMinFormat, precipType, bearingConversion, getHumidityColor, toKiloM, getHumidityBGColor, getHumidityTxtColor, baroPercent, UVLevel, bttmAlign, getPhaseType, getPhaseInfo }) => {
 
+    bttmAlign();
   
     return (
         <div className="conditions justify-self-center w-11/12 ">
-        <div className="desc text-lg text-[#333333] font-normal py-2"> Conditions </div>
+        <div className="desc text-xl font-medium text-neutral-700  py-2 px-1"> Conditions </div>
     <div className="weather-elements p-0 flex flex-wrap w-full justify-around">
 
         <div className="card-column flex-1/2 basis-[44vw] px-2 max-w-1/2">
-            <div className="precip cards shadow-sm mt-4 p-2 align-middle bg-[#F5F5F5] w-full h-fit rounded-lg ">
-                <div className="desc text-md font-light text-[#333333]">Precipitaion</div>
-                <p className='px-2 py-3 text-3xl font-normal text-blue-500'> {Math.round(data.days[dayIndex].hours[indexHour].precipprob)}% </p> 
-                <p className="raininfo my-2 text-sm text-zinc-700">Chance of rain</p>
-                <hr className='my-2 text-zinc-700' />                  
-                <p className='py-1 font-normal text-sm text-zinc-700'> {precipType(data.days[dayIndex].hours[indexHour].preciptype, data.days[dayIndex].precip, data.days[dayIndex].hours[indexHour].snow, data.days[dayIndex].hours[indexHour].snowdepth)} </p> 
+            <div className="precip cards shadow-sm mt-4 p-2 align-middle bg-[rgba(229,229,229,.5)] w-full h-fit rounded-lg ">
+                <div className="desc text-lg font-medium text-neutral-700">Precipitaion</div>
+                <p className='px-2 py-3 text-3xl font-normal text-blue-500'> {Math.round(data.days[dayIndex].hours[indexHour].precipprob)}% </p>
+                <p className="raininfo my-2 text-sm text-neutral-700">Chance of rain</p>
+                <hr className='my-2 text-neutral-200' />                  
+                <p className='py-1 font-normal text-sm text-neutral-700'> {precipType(data.days[dayIndex].hours[indexHour].preciptype, data.days[dayIndex].precip, data.days[dayIndex].hours[indexHour].snow, data.days[dayIndex].hours[indexHour].snowdepth)} </p> 
             </div>
-            <div className="wind cards shadow-sm mt-4 p-2 align-middle bg-[#F5F5F5] relative w-full h-fit rounded-lg ">
-                <div className="desc text-md font-light text-[#333333] bold">Wind</div>
+
+            <div className="wind cards shadow-sm mt-4 p-2 align-middle bg-[rgba(229,229,229,.5)] relative w-full h-fit rounded-lg ">
+                <div className="desc text-lg font-medium text-neutral-700 bold">Wind</div>
 
                 <div className="compass grid">
                     <div className="north text-sm  justify-self-center text-zinc-400">N</div>
@@ -39,29 +41,29 @@ const CurrentConditions = ({
                     <div className="west text-sm relative bottom-full text-zinc-400">W</div>
                     <div className="south text-sm justify-self-center text-zinc-400">S</div>
                 </div>
-                <p className='py-1 text-zinc-700'> {bearingConversion(data.days[dayIndex].hours[indexHour].winddir)} </p>
-                <hr className='my-2 text-zinc-400' />
-                <p className='py-1 text-zinc-700'> 
-                    <span className="speed text-xl font-normal"> {toKiloM(data.days[dayIndex].hours[indexHour].windspeed)} </span>
+                <p className='py-1 text-neutral-700 font-medium'> {bearingConversion(data.days[dayIndex].hours[indexHour].winddir)} </p>
+                <hr className='my-2 text-neutral-200' />
+                <p className='py-1 text-neutral-700'> 
+                    <span className="speed text-lg font-normal"> {toKiloM(data.days[dayIndex].hours[indexHour].windspeed)} </span>
                     km/h
                 </p>
             </div>
-            
-            <div className="visible cards shadow-sm mt-4 p-2 relative w-full h-fit align-middle bg-[#F5F5F5] rounded-lg ">
-                <div className="desc text-md font-light text-[#333333]">Visibility</div>
-                <img src="/horizon.png" alt="" className="s m-4" />
-                <p className='py-1 text-[#505058]'> <img src="/visibility.png" alt="" className='me-1 inline-block'/>
+
+            <div className="visible cards shadow-sm mt-4 p-2 relative w-full h-fit align-middle bg-[rgba(229,229,229,0.5)] rounded-lg ">
+                <div className="desc text-lg font-medium text-neutral-700">Visibility</div>
+                <img src="/horizon.png" alt="" className="m-4" />
+                <p className=' text-neutral-700 font-normal font-sans'> <img src="/visibility.png" alt="" className='me-1 inline-block'/>
                     {toKiloM(data.days[dayIndex].hours[indexHour].visibility)} km
                 </p>
-                <p className='py-1  text-[#505058]'> <img src="/cloud-cover.png" alt="" className="me-1 inline-block" />
-                    {data.days[dayIndex].hours[indexHour].cloudcover} %
+                <p className='py-1  text-neutral-700 font-normal font-sans'> <img src="/cloud-cover.png" alt="" className="me-1 inline-block" />
+                    <span className="cloud inline-block"> {data.days[dayIndex].hours[indexHour].cloudcover} %</span> Cloud cover
                 </p>                                                
             </div>
         </div>
 
         <div className="card-column flex-1/2 basis-[44vw] px-2 max-w-1/2">
-            <div className="humid cards shadow-sm mt-4 p-2 align-middle bg-[#F5F5F5] w-full h-fit rounded-lg " >
-                <div className="desc text-md font-light text-[#333333] bold"> Humidity </div>
+            <div className="humid cards shadow-sm mt-4 p-2 align-middle bg-[rgba(229,229,229,.5)] w-full h-fit rounded-lg " >
+                <div className="desc text-lg font-medium text-neutral-700"> Humidity </div>
                 <div className="humid-meter place-self-center">
                     <div className="ms-4 mt-4 text-sm text-zinc-400">100</div>
                     <p className={`auto grid-xl-zinc-200 shadow-lg relative px-6 h-20 w-fit m-1 rounded-full overflow-hidden`}
@@ -73,7 +75,7 @@ const CurrentConditions = ({
                                 height: `${(data.days[dayIndex].hours[indexHour].humidity)}%`,
                                 backgroundColor: getHumidityBGColor((data.days[dayIndex].hours[indexHour].humidity))
                                 }}>
-                            <span className={`humid text-xl px-0 py-[10%] w-full font-bold absolute left-[15%] top-3/4 transform -translate-y-full`}
+                            <span className={`humid text-xl px-0 py-[10%] w-full font-semibold font-sans  absolute left-[15%] top-3/4 transform -translate-y-full`}
                             style={{
                                 color: getHumidityTxtColor((data.days[dayIndex].hours[indexHour].humidity))
                             }}>
@@ -83,15 +85,16 @@ const CurrentConditions = ({
                     </p> <div className="ms-6 mb-4 text-sm text-zinc-400"> 0 </div>
                 </div>
                 <p className='py-1 inline'> 
-                    <span className="dew inline-block rounded-full p-1 text-center text-green-700 bg-green-300"> 
+                    <span className="dew inline-block rounded-full p-1 text-center text-green-700 bg-green-300 font-semibold font-sans">
                     {Math.round(defaultTempUnit(data.days[dayIndex].hours[indexHour].dew))}°</span> <span className="wr text-[#505058] inline-block">Dew point</span>  </p>                       
             </div>
-            <div className="pressure cards shadow-sm mt-4 p-2 align-middle bg-[#F5F5F5] w-full h-fit rounded-lg ">
-                <div className="desc text-md font-light text-[#333333]"> Pressure </div>
+            
+            <div className="pressure cards shadow-sm mt-4 p-2 align-middle bg-[#F1F1F1] w-full h-fit rounded-lg ">
+                <div className="desc text-lg font-medium text-neutral-700"> Pressure </div>
                 
                 <div className="pressure-meter place-self-center">
                     <div className="p_ring relative w-16 h-16 m-2 rounded-full">
-                    <span className="block absolute z-[50] bottom-0 top-[55%] left-[25%] right-0 h-1/4 w-1/2 mt-4 bg-[#F5F5F5] rounded-full " aria-hidden="true"></span>
+                    <span className="block absolute z-[50] bottom-0 top-[55%] left-[25%] right-0 h-1/4 w-1/2 mt-4 bg-[#F1F1F1] rounded-full " aria-hidden="true"></span>
                     <div className="progress absolute w-full h-full rounded-full"
                     style={{
                         background: `conic-gradient(
@@ -110,17 +113,18 @@ const CurrentConditions = ({
                 <span className="l relative bottom-4 ms-4 text-xs z-[60] text-zinc-400">high</span>
                 </div>
                 <p className='py-1 text-[#505058]'> 
-                    <span className="pval font-medium text-base ">{data.days[dayIndex].hours[indexHour].pressure}</span> mb 
+                    <span className="pval font-medium text-base font-sans">{data.days[dayIndex].hours[indexHour].pressure}</span> mb 
                 </p>
             </div>
-            <div className="solar cards shadow-sm w-full mt-4 p-2 align-middle bg-[#F5F5F5] relative h-fit rounded-lg ">
-                <div className="desc text-md font-light text-[#333333] bold">UV Index</div>
+
+            <div className="solar cards shadow-sm w-full mt-4 p-2 align-middle bg-[rgba(229,229,229,.5)] relative h-fit rounded-lg ">
+                <div className="desc text-lg font-medium text-neutral-700 bold">UV Index</div>
 
                 <div className="uvmeter relative h-fit">
                 <div className="ms-8 relative top-3 text-sm text-zinc-400">11+</div>
-                    <div className="currentUV absolute bottom-1 left-1 text-zinc-400"
+                    <div className="currentUV absolute bottom-1 left-1 text-amber-800"
                     style={{
-                            height: `${UVLevel(data.days[dayIndex].uvindex)}%`,
+                            height: `${bttmAlign(UVLevel(data.days[dayIndex].uvindex))}%`,
                             bottom: `${bttmAlign(UVLevel(data.days[dayIndex].hours[indexHour].uvindex))}px`
                         }}> {data.days[dayIndex].hours[indexHour].uvindex} </div>
 
@@ -138,7 +142,7 @@ const CurrentConditions = ({
         </div>
     </div>
     
-    <div className="phases grid row-auto grid-cols-2 col-span-2 w-full h-fit p-2 cards shadow-sm mt-8 align-middle bg-[#F5F5F5] relative bottom-[2%] rounded-lg ">
+    <div className="phases grid row-auto grid-cols-2 col-span-2 w-full h-fit p-2 cards shadow-sm mt-8 align-middle bg-[rgba(229,229,229,.5)] relative bottom-[2%] rounded-lg ">
         <div className="desc text-md font-light  text-[#333333] col-span-2"> Astro </div>
         
         <div className="sun-phase col-span-1 row-span-2">
