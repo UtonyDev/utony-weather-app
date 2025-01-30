@@ -9,8 +9,6 @@ function Overview({
      }) {
 
         let symb;
-        console.log(indexHour)
-
     return (
         <div className="temp-comp grid grid-auto grid-cols-2 row-auto justify-self-center w-11/12 px-6 py-4 gap-3 z-40">
             <h1 className="avg-temp justify-self-center col-span-2 text-teal-900 lining- leading-snug mb-2">

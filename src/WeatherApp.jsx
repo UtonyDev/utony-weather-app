@@ -30,7 +30,6 @@ function WeatherApp() {
   const hourInfoRef = useRef([]); 
   const hourTimeRef = useRef([]);
   const dayRef = useRef([]);
-
   const API_KEY = '124d73669936416ea36f14503e262e7d';
   let userUnitPreference = localStorage.getItem('userUnitPref');
 
@@ -61,6 +60,21 @@ function WeatherApp() {
       } else {
           setSuggestions([]);
       }
+  }
+
+  let searchBar = document.querySelector('.search-bar');
+  const joinSuggestions = () => {
+    if (searchBar) {
+    if (suggestions.length >= 1) {
+        searchBar.classList.replace('rounded-full', 'rounded-t-lg');
+        searchBar.classList.remove('focus:rounded-full');
+        searchBar.classList.add('scale-[1.025]');
+    } else {
+        searchBar.classList.replace('rounded-t-lg', 'rounded-full');
+        searchBar.classList.add('focus:rounded-full');
+        searchBar.classList.remove('scale-[1.025]');
+    }
+}
   }
 
   const unformatLocation = (index) => {
@@ -513,8 +527,7 @@ const getPhaseInfo = (phase) => {
   if (phase == 0.75) { return `Last Quarter`};
   if (phase > 0.75 && phase < 1) { return `Waning crescent`};
 }
-
-   
+ 
   const showSetting = () => {
       const settingElement = document.querySelector('#w-menu-card');
       if (!settingElement) return;
@@ -614,15 +627,19 @@ const getPhaseInfo = (phase) => {
                 <div className="search z-50 relative top-3 p-1 grid grid-auto w-full">
                     <motion.input type="search"
                      value={query} 
-                     className='search-icon justify-self-center w-11/12 text-md row-span-auto bg-[#EBEBEB] p-3 rounded-full focus:bg-[#F5F5F5] focus-within:outline-none focus:rounded-b-none focus:rounded-t-2xl border  border-gray-200  z-[50]' 
+                     className='search-icon search-bar justify-self-center w-11/12 text-md row-span-auto bg-[#EBEBEB] p-3 rounded-full focus:rounded-full focus:scale-[1.025] focus:bg-[#F5F5F5] focus-within:outline-none border border-gray-200  z-[50]' 
                      name="place" id="place"
-                     whileFocus={{ 
-                        scale: 1.025,
-                      }} href="#"
-                     onChange={InputValChange} 
+                     onChange={InputValChange}
+                     onFocus={joinSuggestions()}
+                     style={{
+                        
+                        borderBottomLeftRadius: suggestions.length >= 1 ? 'none' : '',
+                        borderBottomRightRadius: suggestions.length >= 1 ? 'none' : '',
+                     }}
                      placeholder={address} />
+
                 {suggestions.length > 0 && (
-                    <ul className=' absolute justify-self-center w-11/12 top-12 text-zinc-800 bg-[#f5f5f5] border border-gray-200 rounded-b-2xl overflow-y-clip z-[50]'>
+                    <ul className=' absolute justify-self-center w-11/12 top-12 text-zinc-800 bg-[#f5f5f5] border-2 scale-[1.005] border-gray-200 rounded-b-2xl overflow-y-clip z-[50]'>
                         {suggestions.map((suggestion, index) => (
                             <li key={index} className={`p-1 text-neutral-950 text-sm  hover:opacity-70 `} onClick={
                                  () => {
