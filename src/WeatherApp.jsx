@@ -84,7 +84,7 @@ function WeatherApp() {
      console.log(splitData)
       if (splitData) {
           const newcity = splitData[dayIndex];
-          const newcountry = splitData[splitData.length - 1];
+          const newcountry = splitData[splitData.length - 1].trim();
           console.log(newcountry)
           fetchData(newcity, newcountry);
           if (userUnitPreference) {
