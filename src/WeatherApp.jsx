@@ -505,7 +505,8 @@ const showSetting = () => {
     const settingElement = document.querySelector('#w-menu-card');
 
     // Make sure to use the correct key for retrieving country from localStorage
-    const globalCountry = localStorage.getItem('storedCountry'); // Use a string key
+    let storedCountry;
+    const globalCountry = localStorage.getItem(storedCountry); // Use a string key
     let parseGlobalCountry = globalCountry ? globalCountry.replace(/"/g, '') : null;
 
     console.log(parseGlobalCountry);
