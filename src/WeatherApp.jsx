@@ -397,6 +397,17 @@ function WeatherApp() {
       return realDate;
   };
 
+
+  const estimatedPrecipChance = (prob) => {
+    if (data) {
+       const iteratedProbs = data.days[0].hours.map(hour => hour.precipprob);
+       const averagedProb = (iteratedProbs.reduce((sum, prob) => sum + prob, 0) / 24 );
+       console.log(Math.round(averagedProb));
+
+       return Math.round(averagedProb);
+    }
+  }
+
 const precipType = (type, amount, snowamount, snowdepth ) => {
   const rainmessage = `${amount}, mm  of rainfall` 
   const snowmessage = `${snowamount}, cm  of snow with ${snowdepth} cm Depth`;
@@ -492,7 +503,6 @@ const getPhaseInfo = (phase) => {
  
   const showSetting = () => {
       const settingElement = document.querySelector('#w-menu-card');
-      if (!settingElement) return;
         
       let storedCountry;
       const globalCountry = localStorage.getItem(storedCountry);
@@ -685,7 +695,7 @@ const getPhaseInfo = (phase) => {
                                 <p className='day-element inline-block text-[#505058] font-medium tracking-wide text-base p-1 w-fit h-fit' ref={(el) => (dayRef.current[index]) = el }>{formatFullDay(day.datetime)}</p>
                                 <span className="dayInfo justify-self-end ">
                                 <p className='inline-block text-[#008080] font-sans font-medium tracking-wide text-base  px-2'>{defaultTempUnit(day.temp)}{tempSymbol(symb)}</p>
-                                <p className='inline-block text-[#505058] font-sans font-normal tracking-wide text-base px-2'>{Math.round(day.precipprob)}%</p>
+                                <p className='inline-block text-[#505058] font-sans font-normal tracking-wide text-base px-2'>{index === 0 ? estimatedPrecipChance(day.precipprob) : Math.round(day.precipprob)}%</p>
                                 <p className="inline-block"> <img src={`${iconBasePath}${day.icon}.png`} alt="" className="src size-5" /> </p>
                                 </span>
                             </motion.li>
@@ -711,8 +721,7 @@ const getPhaseInfo = (phase) => {
                   />
         </div>
 
-            <span className="menu-butn absolute top-[13%] md:top-[18%] right-[2.5%] md:right-[1.25%]  translate-y-full text-sm z-50" onClick={showSetting}
-            >
+            <span className="menu-butn absolute top-[13%] md:top-[18%] right-[2.5%] md:right-[1.25%]  translate-y-full text-sm z-50" onClick={showSetting}>
                     <img src="/icons8-menu-vertical-24.png" 
                     className='active:opacity-70 bg-transparent p-1 rounded-full size-fit'
                     alt="" srcSet="" />
