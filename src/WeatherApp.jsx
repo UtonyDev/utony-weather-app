@@ -567,7 +567,7 @@ const showSetting = () => {
         dayElement[0].classList.add('text-teal-600');
     }
 }
-    highlightCurrentDay();
+    useEffect(() => {highlightCurrentDay()})
 
   const defaultPage = (page) => {
       setDayPage(page);
@@ -632,7 +632,8 @@ const showSetting = () => {
         ) : prompt ? (
             <div className="weather-app h-screen bg-slate-50" id="target">
                 <LocationForm fetchData={fetchData} convertCoordinates={convertCoordinates} />
-            </div>) : data && (
+            </div>
+        ) : data && (
             <>
             <div id="weather-app" className='weather-app-grid grid md: justify-items-center col-auto gap-5 md:gap-0 relative bg-[rgba(249,249,251,.3)] md:h-full z-20' 
                 onLoad={defaultTempUnit}
@@ -698,7 +699,7 @@ const showSetting = () => {
                                     updateDayIndex(index);
                                 }}>
 
-                                <p className='day-element inline-block text-[#505058] font-medium tracking-wide text-base p-1 w-fit h-fit' ref={(el) => (dayRef.current[index]) = el }>{formatFullDay(day.datetime)}</p>
+                                <p className='day-element inline-block text-[#505058] font-medium tracking-wide text-base p-1 w-fit h-fit' ref={(el) => (dayRef.current[index]) = el }>{formatFullDay(data.days[index].datetime)}</p>
                                 <span className="dayInfo justify-self-end ">
                                 <p className='inline-block text-[#008080] font-sans font-medium tracking-wide text-base  px-2'>{defaultTempUnit(day.temp)}{tempSymbol(symb)}</p>
                                 <p className='inline-block text-[#505058] font-sans font-normal tracking-wide text-base px-2'>{index === 0 ? estimatedPrecipChance(day.precipprob) : Math.round(day.precipprob)}%</p>
