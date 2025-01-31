@@ -5,13 +5,14 @@ import CurrentConditions from './CurrentConditions';
 import './weather.css';
 import '../index.css';
 import '../App.css';
+import './days.css';
 
 function Days( {
     data,  Overview, 
     HourlyList, dayIndex, 
     CurrentConditions,
     onPageUpdate, defaultTempUnit, tempSymbol, 
-    iconBasePath, hourMinFormat, precipType, 
+    hourMinFormat, precipType, 
     bearingConversion, getHumidityColor, 
     toKiloM, getHumidityBGColor, getHumidityTxtColor, 
     baroPercent, UVLevel, bttmAlign, 
@@ -22,6 +23,8 @@ function Days( {
     const pageRef = useRef([]);
     const hourInfoRef = useRef([]);
     const hourTimeRef = useRef([]);
+
+    const iconBasePath = '/GWeatherIcons/';
 
     useEffect(() => {
         const timezone = data.timezone;
@@ -90,26 +93,26 @@ function Days( {
     };
 
     return (
-        <div className='weather-app bg-slate-50'>
-            <div className="dayname absolute pt-4 h-fit ms-4" 
+        <div className='weather-days-app bg-[rgba(249,249,251,.3)]'>
+            <div className="back-to absolute pt-4 h-fit ms-4" 
             onClick={() => {defaultPage()}}
             ref={pageRef}> 
                 <img src='/icons8-back-24.png' alt="" srcSet="" /> 
             </div>
 
-            <div className="day-weather top-0 pt-4  grid grid-cols-1 row-auto justify-items-center h-full gap-5">
-                <div className="daytext relative text-teal-900 text-xl leading-snug"> {formatFullDay(data.days[dayIndex].datetime)}</div>
+            <div className="day-elements top-0 pt-4 justify-self-center md:max-w-3/5 grid grid-cols-1 row-auto justify-items-center h-full gap-5">
+                <div className="day-dated relative text-teal-900 text-xl leading-snug"> {formatFullDay(data.days[dayIndex].datetime)}</div>
                 
                 <Overview 
                   data={data} dayIndex={dayIndex} 
                   indexHour={indexHour} defaultTempUnit={defaultTempUnit}
-                  tempSymbol={tempSymbol} iconBasePath={iconBasePath} />
+                  tempSymbol={tempSymbol} />
                   
                 <HourlyList 
                   data={data} dayIndex={dayIndex} indexHour={indexHour}
                   defaultTempUnit={defaultTempUnit} hourTimeRef={hourInfoRef}
                   hourInfoRef={hourInfoRef}
-                  tempSymbol={tempSymbol} iconBasePath={iconBasePath} 
+                  tempSymbol={tempSymbol}  
                   hourMinFormat={hourMinFormat}/>
 
                 <CurrentConditions 
@@ -127,7 +130,7 @@ function Days( {
                   bttmAlign={bttmAlign}
                   getPhaseType={getPhaseType}
                   getPhaseInfo={getPhaseInfo}/>
-        </div>
+            </div>
         </div>
     );
     

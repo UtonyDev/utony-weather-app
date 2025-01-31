@@ -5,6 +5,7 @@
     background: url("/icons8-search-location-48.png")
       no-repeat 12px center;
     background-size: 1.2em; /* Adjust icon size */
+    background-color: #F9F9FB;
   }
 
 .hide-card {
@@ -14,3 +15,25 @@
   display: block;
 }
 
+@media (min-width:600px)  {
+   /* portrait tablets,*/
+.weather-app-grid {
+  display: grid;
+  grid-template-columns: .6fr 1fr;
+  grid-template-rows: repeat(3, auto);
+  
+  grid-template-areas:
+    " search overview "
+    " daily overview"
+    " daily hourly "
+    " daily current "
+    "   -   current "
+    "   -   current ";
+}
+
+.search { grid-area: search; background-color: rgba(229,229,229,.5); }
+.overview { grid-area: overview; }
+.daily { grid-area: daily; }
+.hourly { grid-area: hourly; }
+.current { grid-area: current; }
+}

@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef} from 'react';
+import { useState, useEffect, useRef, useCallback} from 'react';
 import { motion } from "framer-motion";
 import axios from "axios";
 import CurrentConditions from './Components/CurrentConditions';
@@ -21,7 +21,6 @@ function WeatherApp() {
   const [query, setQuery] = useState("");
   const [suggestions, setSuggestions] = useState([]);
   const [holdResult, setHoldResult] = useState('');
-  const [chosenIndex, setChosenIndex] = useState(0);
   const [dayPage, setDayPage] = useState(false);
   const [dayIndex, setDayIndex] = useState(0);
   const [metricUnit, setMetricUnit] = useState(false);
@@ -202,72 +201,54 @@ function WeatherApp() {
   }, [data]); // Re-run the effect whenever 'data' changes
 
   // Function to fetch weather data.
-  const fetchData = async (city, country) => {
-    const countryitem = country;
-    console.log(countryitem);
-    let storedCountry;
-    localStorage.setItem(storedCountry, JSON.stringify(countryitem));
+  const fetchData = useCallback(async (city, country) => {
+    console.log(country);
 
-        let cacheKey = `${city}:${country}`;
-      const weatherCacheKey = 'weatherCache';
-      if (userUnitPreference) {
-          checkCountry(userUnitPreference);
-          console.log('using user pref');
-      } else {
-          checkCountry(country);
-          console.log('using location');
-      }
-      
-      // Retrieve the cache object from localStorage
-      const cachedData = JSON.parse(localStorage.getItem(weatherCacheKey)) || {};
-     
-  
-      // Check if data for the given city-country pair exists in the cache
-      if (cachedData[cacheKey]) {
-          const jsonCachedData = cachedData[cacheKey]; 
-          setData(jsonCachedData); // Set the state to cached data 
-          console.log('Cache key:', cacheKey);
-          console.log('Using cached weather data:', jsonCachedData);
-      } else {
-          console.log('Data not found in cache... fetching from server');
+    // Store country in localStorage
+    localStorage.setItem('storedCountry', JSON.stringify(country));
 
-      if (chosenIndex) {
-          setPrompt(true); 
-          console.log('yes', chosenIndex);
-      } else {
-          setPrompt(false);
-          setLoading(true);
-          console.log('no', chosenIndex);
-      }
-          try {
-              const response = await fetch(`https://utony-weather-server.onrender.com/api/weather?city=${city}&country=${country}`);
+    let cacheKey = `${city}:${country}`;
+    const weatherCacheKey = 'weatherCache';
 
-              if (!response.ok) {
-                  throw new Error('Network response was not ok');
-              }
-  
-              const jsonData = await response.json();
-              const storedData = [];
-              localStorage.setItem(storedData, jsonData);
-              console.log('new stored data', storedData)
-              // Update the cache object with new data
+    // Set loading and prompt states
+    setLoading(true);
+    setPrompt(true);
 
-              cachedData[cacheKey] = jsonData;
-              localStorage.setItem(weatherCacheKey, JSON.stringify(cachedData)); // Save the updated cache to localStorage
-  
-              setData(jsonData); // Set the fetched data to state
-              console.log('Fetched data from server:', jsonData);
+    try {
+        // Check cache
+        const cachedData = JSON.parse(localStorage.getItem(weatherCacheKey)) || {};
+        if (cachedData[cacheKey]) {
+            const jsonCachedData = cachedData[cacheKey];
+            setData(jsonCachedData); // Use cached data
+            console.log('Using cached weather data:', jsonCachedData);
+        } else {
+            // Fetch data from server
+            const response = await fetch(`https://utony-weather-server.onrender.com/api/weather?city=${city}&country=${country}`);
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
 
-          } catch (err) {
-              console.error('Error fetching weather data:', err);
-              setError(err.message); // Handle network error
-          } finally {
-              setPrompt(false); // End prompt state
-              setLoading(false);
+            const jsonData = await response.json();
 
-          }
-      }
-  };
+            // Store fetched data
+            localStorage.setItem('storedData', JSON.stringify(jsonData));
+            console.log('New stored data', jsonData);
+
+            // Update cache
+            cachedData[cacheKey] = jsonData;
+            localStorage.setItem(weatherCacheKey, JSON.stringify(cachedData));
+
+            setData(jsonData); // Set fetched data to state
+            console.log('Fetched data from server:', jsonData);
+        }
+    } catch (err) {
+        console.error('Error fetching weather data:', err);
+        setError(err.message); // Handle network error
+    } finally {
+        setPrompt(false); // End prompt state
+        setLoading(false); // End loading state
+    }
+}, []);
 
   const convertCoordinates = async (latitude, longitude) => {
       const apiKey = '124d73669936416ea36f14503e262e7d';
@@ -398,36 +379,6 @@ function WeatherApp() {
   const updateDayIndex = (index) => {
       setDayIndex(index);
    }
-
-
-  if (loading) {
-      return (
-          <div className="bg-slate-50 place-items-center relative grid w-full h-screen">
-              <span className="absolute top-1/3 spinner"></span>
-              <div className="plead-message absolute top-[55%]"> Please hold on this may take a while...</div>
-          </div>
-      )
-  }
-
-  if (prompt) {
-      return (
-          <div className='weather-app h-screen bg-slate-50' id='target'>
-              <LocationForm fetchData={fetchData} 
-              convertCoordinates={convertCoordinates}/>
-          </div>
-      );
-  }
-
-  if (error) {
-      return (
-          <div className='weather-app h-screen'>
-              <div className="error-message border border-zinc-400 bg-amber-100 relative grid place-self-center rounded place-content-center top-1/3 w-11/12">
-                  <img src='/mark.png' className='place-self-start p-2'/>
-                  <p className=' text-red-700 w-3/4 top-1/3 p-2'>Error: {error} please enter a valid address...</p>
-              </div>
-          </div>
-      );
-  }
                
    const hourMinFormat = (fullTime) => {
        const formattedTime = fullTime.slice(0, -3);
@@ -591,41 +542,52 @@ const getPhaseInfo = (phase) => {
       }
   }
 
+  const highlightCurrentDay = () => {
+    const dayElement = document.querySelectorAll('.day-element');
+    if (dayElement[0]) {
+        dayElement[0].classList.add('bg-teal-100');
+        dayElement[0].classList.add('rounded-md');
+        dayElement[0].textContent = 'Today';
+        dayElement[0].classList.add('text-teal-600');
+    }
+}
+    highlightCurrentDay();
+
   const defaultPage = (page) => {
       setDayPage(page);
       checkCountry(userUnitPreference);
   }
-   
-  if (dayPage) {
-      return (
-          <div className='weather-app place-items-center relative grid w-full' id='target'>
-             <div className="daily-page"> 
-              <Days 
-                  data={data} checkCountry={checkCountry} 
-                   Overview={Overview} indexHour={indexHour}
-                   HourlyList={HourlyList} CurrentConditions={CurrentConditions}
-                   defaultTempUnit={defaultTempUnit} 
-                   dayIndex={dayIndex} tempSymbol={tempSymbol}
-                   onPageUpdate={defaultPage}
-                   precipType={precipType} 
-                   getHumidityBGColor={getHumidityBGColor}
-                   getHumidityColor={getHumidityColor}
-                   getHumidityTxtColor={getHumidityTxtColor}
-                   bearingConversion={bearingConversion}
-                   toKiloM={toKiloM}
-                   baroPercent={baroPercent}
-                   UVLevel={UVLevel}
-                   bttmAlign={bttmAlign}
-                   getPhaseType={getPhaseType}
-                   getPhaseInfo={getPhaseInfo}
-                   hourMinFormat={hourMinFormat}
-                   formatFullDay={formatFullDay}
-                   showCurrentHour={showCurrentHour}
-              /></div>
-          </div>
-      )
-  }
 
+  if (dayPage) {
+    return (
+        <div className='weather-app place-items-center relative w-full' id='target'>
+           <div className="daily-page"> 
+            <Days 
+                data={data} checkCountry={checkCountry} 
+                 Overview={Overview} indexHour={indexHour}
+                 HourlyList={HourlyList} CurrentConditions={CurrentConditions}
+                 defaultTempUnit={defaultTempUnit} 
+                 dayIndex={dayIndex} tempSymbol={tempSymbol}
+                 onPageUpdate={defaultPage}
+                 precipType={precipType} 
+                 getHumidityBGColor={getHumidityBGColor}
+                 getHumidityColor={getHumidityColor}
+                 getHumidityTxtColor={getHumidityTxtColor}
+                 bearingConversion={bearingConversion}
+                 toKiloM={toKiloM}
+                 baroPercent={baroPercent}
+                 UVLevel={UVLevel}
+                 bttmAlign={bttmAlign}
+                 getPhaseType={getPhaseType}
+                 getPhaseInfo={getPhaseInfo}
+                 hourMinFormat={hourMinFormat}
+                 formatFullDay={formatFullDay}
+                 showCurrentHour={showCurrentHour}
+            /></div>
+        </div>
+    )
+}
+   
   return (
     <motion.div initial="start"
     animate="end"
@@ -634,16 +596,37 @@ const getPhaseInfo = (phase) => {
 
     className='h-auto w-[100%] relative' 
     id='target'>
-        {data && (
+        
+        {loading ? (
+            <div className="bg-slate-50 place-items-center relative grid w-full h-screen">
+                <span className="absolute top-1/3 spinner"></span>
+                <div className="plead-message absolute top-[55%]">
+                    Please hold on, this may take a while...
+                </div>
+            </div>
+        ) : error ? (
+            <div className="weather-app h-screen">
+                <div className="error-message border border-zinc-400 bg-amber-100 relative grid place-self-center rounded place-content-center top-1/3 w-11/12">
+                    <img src="/mark.png" className="place-self-start p-2" />
+                    <p className="text-red-700 w-3/4 top-1/3 p-2">
+                        Error: {error} Please enter a valid address...
+                    </p>
+                </div>
+            </div>
+        ) : prompt ? (
+            <div className="weather-app h-screen bg-slate-50" id="target">
+                <LocationForm fetchData={fetchData} convertCoordinates={convertCoordinates} />
+            </div>) : data && (
             <>
-            <div id="weather-app" className='grid justify-items-center grid-rows-auto grid-col-2 gap-5 relative bg-[rgba(249,249,251,.3)] z-20' 
+            <div id="weather-app" className='weather-app-grid grid md: justify-items-center col-auto gap-5 md:gap-0 relative bg-[rgba(249,249,251,.3)] md:h-full z-20' 
                 onLoad={defaultTempUnit}
                 onClick={hideSettings}
              >
-                <div className="search z-50 relative top-3 p-1 grid grid-auto w-full">
+
+                <div className="search z-50 relative top-2 md:top-0 md:m-0 p-1 grid grid-auto w-full max-h-[48px]">
                     <motion.input type="search"
                      value={query} 
-                     className='search-icon search-bar justify-self-center w-11/12 text-md row-span-auto bg-[#E2E850] p-3 rounded-full focus:rounded-full focus:scale-[1.025] focus:bg-[#F5F5F5] focus-within:outline-none border border-neutral-300 focus:border-neutral-400 text-neutral-950 text-[17px]
+                     className='search-icon search-bar justify-self-center w-11/12 text-md row-span-auto p-3 md:mt-1 rounded-full focus:rounded-full focus:scale-[1.025] focus:bg-[#F5F5F5] focus-within:outline-none border border-neutral-300 focus:border-neutral-400 text-neutral-950 text-[17px]
                      tracking-[0.0125] font-normal z-[50]' 
                      name="place" id="place"
                      onChange={InputValChange}
@@ -662,7 +645,6 @@ const getPhaseInfo = (phase) => {
                                  () => {
                                     setQuery(suggestion);
                                     setSuggestions([]);
-                                    setChosenIndex(index);
                                     unformatLocation(index);
                                     }
                                 }> <span className="search-image relative text-left "> <img src={`icons8-search-location-48.png`} alt="" srcSet="" className='size-5 inline ms-2' /> </span>
@@ -684,8 +666,9 @@ const getPhaseInfo = (phase) => {
                   tempSymbol={tempSymbol} iconBasePath={iconBasePath} 
                   hourMinFormat={hourMinFormat}/>
 
-                <div className="daily-forecast forecast grid grid-rows-1 w-11/12 bg-[rgba(229,229,229,.5)] p-3 mt-1 mb mx-3 shadow-md rounded-lg">
-                    <div className="desc text-xl font-medium text-neutral-600 py-2"> Daily Forecast </div>
+                <div className="daily forecast w-11/12 md:w-full bg-[rgba(229,229,229,.5)] p-3 mt-1 md:mt-0 mx-3 md:mx-0 md:mb-0 rounded-lg md:rounded-none ">
+
+                    <div className="desc text-xl h-fit font-medium row-span-1 text-neutral-600 py-2"> Daily Forecast </div>
 
                     <ul className=" max-h-auto overflow-y-scroll">
                         {data.days.slice(0, 10).map((day, index) => (
@@ -698,7 +681,8 @@ const getPhaseInfo = (phase) => {
                                     setDayPage(true);
                                     updateDayIndex(index);
                                 }}>
-                                <p className='inline-block text-[#505058] font-sans font-normal tracking-wide text-base h-fit' ref={(el) => (dayRef.current[index]) = el }>{formatFullDay(day.datetime)}</p>
+
+                                <p className='day-element inline-block text-[#505058] font-medium tracking-wide text-base p-1 w-fit h-fit' ref={(el) => (dayRef.current[index]) = el }>{formatFullDay(day.datetime)}</p>
                                 <span className="dayInfo justify-self-end ">
                                 <p className='inline-block text-[#008080] font-sans font-medium tracking-wide text-base  px-2'>{defaultTempUnit(day.temp)}{tempSymbol(symb)}</p>
                                 <p className='inline-block text-[#505058] font-sans font-normal tracking-wide text-base px-2'>{Math.round(day.precipprob)}%</p>
@@ -727,7 +711,7 @@ const getPhaseInfo = (phase) => {
                   />
         </div>
 
-            <span className="menu-butn absolute top-[13%] right-[2.5%] translate-y-full text-sm z-50" onClick={showSetting}
+            <span className="menu-butn absolute top-[13%] md:top-[18%] right-[2.5%] md:right-[1.25%]  translate-y-full text-sm z-50" onClick={showSetting}
             >
                     <img src="/icons8-menu-vertical-24.png" 
                     className='active:opacity-70 bg-transparent p-1 rounded-full size-fit'
@@ -735,7 +719,8 @@ const getPhaseInfo = (phase) => {
                 </span>
 
             <div id='w-menu-card' 
-                className="w-menu-card hide-card absolute top-[10%] right-[5%] translate-y-full border-2 border-gray-200 bg-[#ebebeb] w-fit h-fit px-2 py-3 rounded z-[50]"
+                className="w-menu-card hide-card absolute top-[10%] md:top-[13%] right-[5%] md:right-[2.5%]
+                 translate-y-full border-2 border-gray-200 bg-[#ebebeb] w-fit h-fit px-2 py-3 rounded z-[50]"
                 onLoad={hideSettings}
                 >
                 <div className="pref-units">

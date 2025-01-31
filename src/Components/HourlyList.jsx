@@ -6,28 +6,28 @@ import '../index.css';
 const HourlyList = ({ 
     data, dayIndex, indexHour, showCurrentHour,
     hourMinFormat, defaultTempUnit,
-    tempSymbol, iconBasePath, hourTimeRef, hourInfoRef
+    tempSymbol, hourTimeRef, hourInfoRef
 }) => {
 
     let symb;
 
-    showCurrentHour();
+    const iconBasePath = '/GWeatherIcons/';
 
     const highlightCurrentHour = () => {
         const hourTime = document.querySelectorAll('.hour-time');
         if (hourTime[indexHour]) {
-            hourTime[indexHour].classList.add('bg-[#FF7F50]');
+            hourTime[indexHour].classList.add('bg-teal-100');
             hourTime[indexHour].classList.add('rounded-md');
             hourTime[indexHour].classList.add('p-1');
-            hourTime[indexHour].classList.add('text-[#FFD2B5]');
+            hourTime[indexHour].classList.add('text-teal-600');
         }
     }
-
-    highlightCurrentHour();
+    useEffect(() =>{highlightCurrentHour()});
+    ;
 
     return (
-    <div className="hourly-forecast forecast grid grid-rows-1 justify-self-center w-11/12 p-3 bg-[rgba(229,229,229,.5)] gap-3 shadow-md rounded-lg">
-    <div className="desc text-xl font-medium text-neutral-600 "> Hourly Forecast </div>
+    <div className="hourly md:grid-rows-[32px_1fr] md:h-fit  relative forecast grid grid-rows-1 justify-self-center w-11/12 md:w-[97%] md:mx-4 md:m-3 p-3 bg-[rgba(229,229,229,.5)] gap-1 shadow-md rounded-lg">
+    <div className="desc text-xl font-medium md:h-fit  text-neutral-600 "> Hourly Forecast </div>
     <ul className="flex p-1 overflow-x-auto whitespace-nowrap">
         {data.days[dayIndex].hours.map((hour, index) => (
         <li 

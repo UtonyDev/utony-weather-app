@@ -1,0 +1,24 @@
+@media (min-width:600px)  {
+    /* portrait tablets,*/
+ .day-elements {
+   display: grid;
+   grid-template-columns: 1fr;
+   grid-template-rows: repeat(3, auto);
+   
+   grid-template-areas:
+     " day-date "
+     "  overview "
+     " overview"
+     " hourly "
+     " current "
+     " current "
+     " current ";
+ }
+ 
+ .back-to { grid-area: back-to;}
+ .overview { grid-area: overview; }
+ .daily { grid-area: daily; }
+ .hourly { grid-area: hourly; }
+ .current { grid-area: current; }
+ .day-date { grid-area: day-date;}
+ }

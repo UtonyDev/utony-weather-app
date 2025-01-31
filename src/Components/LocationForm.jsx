@@ -40,7 +40,8 @@ function LocationForm({ fetchData, convertCoordinates }) {
           } else {
             console.error("Geolocation is not supported by this browser.");
           }
-          setLoading(true)
+          setLoading(true);
+
         }
 
         if (loading) {
@@ -55,7 +56,7 @@ function LocationForm({ fetchData, convertCoordinates }) {
     return (
         <div className=' place-content-center relative top-[20%] grid'>
 
-<div className="form-container grid sm:w-[90vw] sm:h-[60vh] md:w-[30vw] md:h-fit bg-white shadow-lg rounded-xl py-2 gap-2">
+<div className="form-container grid sm:w-[90vw] sm:h-[60vh] md:max-w-[45vw] md:h-fit bg-white shadow-lg rounded-xl py-2 gap-2">
     <img src="/icons8-place-marker-48.png" alt="location icon" className='block place-self-center'/>
     <label className="text-[#0a0a0a] place-self-center text-2xl flex items-center gap-2">
         Enter Location
