@@ -501,27 +501,32 @@ const getPhaseInfo = (phase) => {
 }
  
  
-  const showSetting = () => {
-      const settingElement = document.querySelector('#w-menu-card');
-        
-      let storedCountry;
-      const globalCountry = localStorage.getItem(storedCountry);
-      const parseGlobalCountry = globalCountry.replace(/"/g, '');
-      console.log(parseGlobalCountry);
-      if (userUnitPreference) {
-          checkCountry(userUnitPreference);
-          console.log('using user pref');
-      } else {
-          checkCountry(parseGlobalCountry);
-          console.log('using location');
-      };
-  
-      if (settingElement.classList.contains('hide-card')) {
-          settingElement.classList.remove('hide-card');
-      } else {
-          settingElement.classList.add('hide-card');
-      }
-  };
+const showSetting = () => {
+    const settingElement = document.querySelector('#w-menu-card');
+
+    // Make sure to use the correct key for retrieving country from localStorage
+    const globalCountry = localStorage.getItem('storedCountry'); // Use a string key
+    let parseGlobalCountry = globalCountry ? globalCountry.replace(/"/g, '') : null;
+
+    console.log(parseGlobalCountry);
+
+    if (userUnitPreference) {
+        checkCountry(userUnitPreference);
+        console.log('using user pref');
+    } else if (parseGlobalCountry) { // Ensure parseGlobalCountry is not null before using it
+        checkCountry(parseGlobalCountry);
+        console.log('using location');
+    } else {
+        console.log("No country data available");
+    }
+
+    // Toggle the setting menu visibility
+    if (settingElement.classList.contains('hide-card')) {
+        settingElement.classList.remove('hide-card');
+    } else {
+        settingElement.classList.add('hide-card');
+    }
+};
   
   const hideSettings = () => {
       const settingElement = document.querySelector('#w-menu-card');
