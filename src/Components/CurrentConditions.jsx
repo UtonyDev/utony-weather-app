@@ -5,10 +5,9 @@ import '../App.css';
 
 const CurrentConditions = ({ 
     data, dayIndex, indexHour, defaultTempUnit,
-    hourMinFormat, precipType, bearingConversion, getHumidityColor, toKiloM, getHumidityBGColor, getHumidityTxtColor, baroPercent, UVLevel, bttmAlign, getPhaseType, getPhaseInfo }) => {
+    hourMinFormat, precipType, bearingConversion, getHumidityColor, toKiloM, getHumidityBGColor, getHumidityTxtColor, baroPercent, UVLevel, getPhaseType, getPhaseInfo }) => {
 
-    bttmAlign();
-  
+
     return (
         <div className="current conditions justify-self-center w-11/12 relative md:w-[97%]">
         <div className="desc text-xl font-medium text-neutral-700  py-2 px-1"> Conditions </div>
@@ -127,13 +126,14 @@ const CurrentConditions = ({
             <div className="solar cards shadow-sm w-full mt-4 p-2 align-middle bg-[rgba(229,229,229,.5)] relative min-h-[275px] rounded-lg md:min-h-[225px]">
                     <div className="desc text-lg font-medium text-neutral-700 bold">UV Index</div>
 
-                    <div className="uvmeter relative h-fit">
+                    <div className="uvmeter relative place-self-center p-1 h-fit">
                     <div className="ms-8 relative top-3 text-sm text-zinc-400">11+</div>
-                        <div className="currentUV absolute bottom-1 left-1 text-amber-800"
+                        <div className="currentUV absolute -left-1 text-amber-800 min-h-[76px]"
+                        > <span className="currentUVLevel mb-1 block relative transition-all"
                         style={{
-                                height: `${bttmAlign(UVLevel(data.days[dayIndex].uvindex))}%`,
-                                bottom: `${bttmAlign(UVLevel(data.days[dayIndex].hours[indexHour].uvindex))}px`
-                            }}> {data.days[dayIndex].hours[indexHour].uvindex} </div>
+                           transform: `translate(${0}px, ${76 - UVLevel(data.days[dayIndex].hours[indexHour].uvindex)}px)`,
+                        }} 
+                        > {data.days[dayIndex].hours[indexHour].uvindex}</span>  </div>
 
                         <div className="sun relative w-16 h-16 m-3 bg-amber-400 rounded-full overflow-clip">
                             <div className="lev absolute bottom-0  bg-red-600 w-full" 

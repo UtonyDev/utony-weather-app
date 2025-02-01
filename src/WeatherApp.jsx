@@ -468,14 +468,7 @@ return perCent;
 }
 
 const UVLevel = (uvval) => {
-const uvPercent = ( uvval * 100 ) / 12;
-return uvPercent;
-}
-
-const bttmAlign = (uvPercent) => {
-if (uvPercent >= 0 && uvPercent < 50) { return `32`};
-if (uvPercent >= 50 && uvPercent < 75) { return `16`};
-if (uvPercent >= 75 && uvPercent < 100) { return `8`};
+    return (( uvval * 76 ) / 12);
 }
 
 const getPhaseType = (phase) => {
@@ -634,7 +627,7 @@ const showSetting = () => {
                 <LocationForm fetchData={fetchData} convertCoordinates={convertCoordinates} />
             </div>
         ) : data && (
-            <>
+        <>
             <div id="weather-app" className='weather-app-grid grid md: justify-items-center col-auto gap-5 md:gap-0 relative bg-[rgba(249,249,251,.3)] md:h-full z-20' 
                 onLoad={defaultTempUnit}
                 onClick={hideSettings}
@@ -643,7 +636,7 @@ const showSetting = () => {
                 <div className="search z-50 relative top-2 md:top-0 md:m-0 p-1 grid grid-auto w-full max-h-[48px]">
                     <motion.input type="search"
                      value={query} 
-                     className='search-icon search-bar justify-self-center w-11/12 text-md row-span-auto p-3 md:mt-1 rounded-full focus:rounded-full focus:scale-[1.025] focus:bg-[#F5F5F5] focus-within:outline-none border border-neutral-300 focus:border-neutral-400 text-neutral-950 text-[17px]
+                     className='search-icon search-bar justify-self-center w-11/12 text-md row-span-auto p-3 md:mt-1 rounded-full focus:rounded-full focus:scale-[1.025] focus:bg-[#F5F5F5] focus-within:outline-none border border-neutral-300 focus:border-neutral-400 text-neutral-700 text-base
                      tracking-[0.0125] font-normal z-[50]' 
                      name="place" id="place"
                      onChange={InputValChange}
@@ -722,7 +715,6 @@ const showSetting = () => {
                   toKiloM={toKiloM}
                   baroPercent={baroPercent}
                   UVLevel={UVLevel}
-                  bttmAlign={bttmAlign}
                   getPhaseType={getPhaseType}
                   getPhaseInfo={getPhaseInfo}
                   />
@@ -732,7 +724,7 @@ const showSetting = () => {
                     <img src="/icons8-menu-vertical-24.png" 
                     className='active:opacity-70 bg-transparent p-1 rounded-full size-fit'
                     alt="" srcSet="" />
-                </span>
+            </span>
 
             <div id='w-menu-card' 
                 className="w-menu-card hide-card absolute top-[10%] md:top-[13%] right-[5%] md:right-[2.5%]
@@ -755,8 +747,8 @@ const showSetting = () => {
                     </label>
                 </div>
                 <button className="px-1 text-sm relative top-1 w-fit shadow-none active:opacity-70 text-red-600" onClick={resetData}> Reset</button>
-            </div>
-            </>
+        </div>
+    </>
         )}
     </motion.div>
   )

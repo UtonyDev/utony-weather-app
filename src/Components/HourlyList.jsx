@@ -8,22 +8,27 @@ const HourlyList = ({
     hourMinFormat, defaultTempUnit,
     tempSymbol, hourTimeRef, hourInfoRef
 }) => {
+    const [highlightedHour, setHighlightedHour] = useState(0);
 
     let symb;
 
     const iconBasePath = '/GWeatherIcons/';
 
-    const highlightCurrentHour = () => {
+    useEffect(() => {
+        // Highlight the current hour
         const hourTime = document.querySelectorAll('.hour-time');
         if (hourTime[indexHour]) {
-            hourTime[indexHour].classList.add('bg-teal-100');
-            hourTime[indexHour].classList.add('rounded-md');
-            hourTime[indexHour].classList.add('p-1');
-            hourTime[indexHour].classList.add('text-teal-600');
+          hourTime[indexHour].classList.add('bg-teal-100', 'rounded-md', 'p-1', 'text-teal-600');
+          setHighlightedHour(indexHour); // Track the currently highlighted hour
         }
-    }
-    useEffect(() =>{highlightCurrentHour()});
-    ;
+    
+        // Cleanup function to remove the highlight
+        return () => {
+          if (highlightedHour !== null && hourTime[highlightedHour]) {
+            hourTime[highlightedHour].classList.remove('bg-teal-100', 'rounded-md', 'p-1', 'text-teal-600');
+          } 
+        };
+      }, [indexHour, highlightedHour]); // Run only when indexHour changes
 
     return (
     <div className="hourly md:grid-rows-[32px_1fr] md:h-fit  relative forecast grid grid-rows-1 justify-self-center w-11/12 md:w-[97%] md:mx-4 md:m-3 p-3 bg-[rgba(229,229,229,.5)] gap-1 shadow-md rounded-lg">
