@@ -6,7 +6,5 @@ import './App.css';
 import WeatherApp from './WeatherApp.jsx'
 
 createRoot(document.getElementById('root')).render(
-  <StrictMode>
     <WeatherApp />
-  </StrictMode>,
 )

@@ -20,15 +20,15 @@
 .weather-app-grid {
   display: grid;
   grid-template-columns: .6fr 1fr;
-  grid-template-rows: repeat(3, auto);
+  grid-template-rows: 48px 1fr auto auto auto;
   
   grid-template-areas:
     " search overview "
     " daily overview"
-    " daily hourly "
+    " daily hourly"
     " daily current "
-    "   -   current "
-    "   -   current ";
+    " recents current "
+    ;
 }
 
 .search { grid-area: search; background-color: rgba(229,229,229,.5); }
@@ -36,4 +36,5 @@
 .daily { grid-area: daily; }
 .hourly { grid-area: hourly; }
 .current { grid-area: current; }
+.recents { grid-area: recents; }
 }

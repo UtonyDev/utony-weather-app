@@ -27,24 +27,24 @@ const CurrentConditions = ({
             <div className="humid cards shadow-sm mt-4 p-2 align-middle bg-[rgba(229,229,229,.5)] w-full min-h-[275px] md:min-h-[225px] rounded-lg " >
                         <div className="desc text-lg font-medium text-neutral-700"> Humidity </div>
                         <div className="humid-meter place-self-center">
-                            <div className="ms-4 mt-4 text-sm text-zinc-400">100</div>
-                            <p className={`auto grid-xl-zinc-200 shadow-lg relative px-6 h-20 w-fit m-1 rounded-full overflow-hidden`}
+                            <div className="ms-4 mt-2 text-sm text-zinc-400">100</div>
+                            <p className={`auto grid-xl-zinc-200 shadow-lg relative px-6 h-20 w-fit m-1 rounded-full overflow-hidden transition-all`}
                             style={{
                                 backgroundColor: getHumidityColor((data.days[dayIndex].hours[indexHour].humidity))
                             }}>
-                            <span className={`level absolute left-0 top-full transform -translate-y-full w-full px-6 rounded-sm`}
+                            <span className={`level absolute left-0 top-full transform -translate-y-full w-full px-6 rounded-sm transition-all`}
                                     style={{
                                         height: `${(data.days[dayIndex].hours[indexHour].humidity)}%`,
                                         backgroundColor: getHumidityBGColor((data.days[dayIndex].hours[indexHour].humidity))
                                         }}>
-                                    <span className={`humid text-xl px-0 py-[10%] w-full font-semibold font-sans  absolute left-[15%] top-3/4 transform -translate-y-full transition-colors`}
+                                    <span className={`humid text-xl px-0 py-[10%] w-full font-semibold font-sans  absolute left-[15%] top-3/4 transform -translate-y-full transition-all`}
                                     style={{
                                         color: getHumidityTxtColor((data.days[dayIndex].hours[indexHour].humidity))
                                     }}>
                                         {Math.round(data.days[dayIndex].hours[indexHour].humidity)}%
                                     </span>
                             </span>
-                            </p> <div className="ms-6 mb-4 text-sm text-zinc-400"> 0 </div>
+                            </p> <div className="ms-6 mb-2 text-sm text-zinc-400"> 0 </div>
                         </div>
                         <p className='py-1 inline'> 
                             <span className="dew inline-block rounded-full p-1 text-center text-green-700 bg-green-300 font-semibold font-sans">
@@ -53,40 +53,12 @@ const CurrentConditions = ({
         </div>
 
         <div className="card-column flex-1/2 basis-[44vw] ps-1 pe-2 max-w-1/2 md:flex-1/3 md:max-w-[32%]">
-            <div className="wind cards shadow-sm mt-4 p-2 align-middle bg-[rgba(229,229,229,.5)] relative w-full min-h-[275px] md:min-h-[225px] rounded-lg ">
-                <div className="desc text-lg font-medium text-neutral-700 bold">Wind</div>
-
-                <div className="compass grid">
-                    <div className="north text-sm  justify-self-center text-zinc-400">N</div>
-                    <div className="east text-sm  justify-self-end translate-y-1/3 relative top-full text-zinc-400">E</div>
-                    <div 
-                    className="arrow justify-self-center text-4xl"
-                    >
-                        <img src="/compass.png" alt="" srcSet="" className='w-6 h-6 '
-                        style={{
-                            transform: `rotate(${data.days[dayIndex].hours[indexHour].winddir}deg)`,
-                            }}/>
-                        
-                    </div>
-                    <div className="west text-sm relative bottom-full text-zinc-400">W</div>
-                    <div className="south text-sm justify-self-center text-zinc-400">S</div>
-                </div>
-                <p className='py-1 text-neutral-700 font-medium'> {bearingConversion(data.days[dayIndex].hours[indexHour].winddir)} </p>
-                <hr className='my-2 text-neutral-200' />
-                <p className='py-1 text-neutral-700'> 
-                    <span className="speed text-lg font-normal"> {toKiloM(data.days[dayIndex].hours[indexHour].windspeed)} </span>
-                    km/h
-                </p>
-            </div>
-        </div>
-        
-        <div className="card-column flex-1/2 basis-[44vw] ps-1 pe-2 max-w-1/2 md:flex-1/3 md:max-w-[32%]">
             <div className="pressure cards shadow-sm mt-4 p-2 align-middle bg-[#F1F1F1] w-full min-h-[275px] md:min-h-[225px] rounded-lg md:h-[192px]">
                 <div className="desc text-lg font-medium text-neutral-700"> Pressure </div>
-                <div className="pressure-meter place-self-center">
+                <div className="pressure-meter place-self-center mt-6">
                     <div className="p_ring relative w-16 h-16 m-2 rounded-full">
                     <span className="block absolute z-[50] bottom-0 top-[55%] left-[25%] right-0 h-1/4 w-1/2 mt-4 bg-[#F1F1F1] rounded-full " aria-hidden="true"></span>
-                    <div className="progress absolute w-full h-full rounded-full"
+                    <div className="progress absolute w-full h-full rounded-full transition-all"
                     style={{
                         background: `conic-gradient(
                         from 150deg,
@@ -109,6 +81,34 @@ const CurrentConditions = ({
             </div>
         </div>
 
+        <div className="card-column flex-1/2 basis-[44vw] ps-1 pe-2 max-w-1/2 md:flex-1/3 md:max-w-[32%]">
+            <div className="wind cards shadow-sm mt-4 p-2 align-middle bg-[rgba(229,229,229,.5)] relative w-full min-h-[275px] md:min-h-[200px] rounded-lg ">
+                <div className="desc text-lg font-medium text-neutral-700 bold">Wind</div>
+
+                <div className="compass grid">
+                    <div className="north text-sm  justify-self-center text-zinc-400">N</div>
+                    <div className="east text-sm  justify-self-end translate-y-1/3 relative top-full text-zinc-400">E</div>
+                    <div 
+                    className="arrow justify-self-center text-4xl"
+                    >
+                        <img src="/compass.png" alt="" srcSet="" className='w-6 h-6 transition-all'
+                        style={{
+                            transform: `rotate(${data.days[dayIndex].hours[indexHour].winddir}deg)`,
+                            }}/>
+                        
+                    </div>
+                    <div className="west text-sm relative bottom-full text-zinc-400">W</div>
+                    <div className="south text-sm justify-self-center text-zinc-400">S</div>
+                </div>
+                <p className='py-1 text-neutral-700 font-medium'> {bearingConversion(data.days[dayIndex].hours[indexHour].winddir)} </p>
+                <hr className='my-1 text-neutral-200' />
+                <p className='py-1 text-neutral-700'> 
+                    <span className="speed text-lg font-normal"> {toKiloM(data.days[dayIndex].hours[indexHour].windspeed)} </span>
+                    km/h
+                </p>
+            </div>
+        </div>
+        
         <div className="card-column flex-1/2 basis-[44vw] ps-1 pe-2 max-w-1/2 md:flex-1/3 md:max-w-[32%]">
             <div className="visible cards shadow-sm mt-4 p-2 relative w-full md:h-[192px] align-middle bg-[rgba(229,229,229,0.5)] min-h-[275px] md:min-h-[225px] rounded-lg">
                     <div className="desc text-lg font-medium text-neutral-700">Visibility</div>

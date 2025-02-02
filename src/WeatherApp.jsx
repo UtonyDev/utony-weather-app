@@ -6,6 +6,7 @@ import HourlyList from './Components/HourlyList';
 import Overview from './Components/Overview';
 import Days from './Components/Days';
 import LocationForm from './Components/LocationForm';
+import RecentSearches from './Components/Recents';
 import './Components/weather.css';
 import './App.css';
 import './index.css';
@@ -26,6 +27,7 @@ function WeatherApp() {
   const [metricUnit, setMetricUnit] = useState(false);
   const [usUnit, setUSUnit] = useState(false);
   const [ukUnit, setUKUnit] = useState(false);
+  const [recentSearch, setRecentSearch] = useState(false);
   const hourInfoRef = useRef([]); 
   const hourTimeRef = useRef([]);
   const dayRef = useRef([]);
@@ -124,10 +126,9 @@ function WeatherApp() {
           console.log('Using cached data from weatherCache:', latestData);
           console.log(latestData.resolvedAddress);
 
-          console.log('the user prefers: ', userUnitPreference);
-
           if (userUnitPreference) {
               checkCountry(userUnitPreference);
+              console.log('the user prefers: ', userUnitPreference);
           } else {
               console.log('user hasnt set preference');
               let cacheLocation = latestData.resolvedAddress.split(',');
@@ -463,7 +464,7 @@ const toKiloM = (mph) => {
 }
 
 const baroPercent = (pressure) => {
-const perCent = ( pressure * 100 ) / ( 1013.25 * 1.2 ); // 1.2 added for scalling
+const perCent = ( pressure * 100 ) / ( 1013.25 * 1.125); // 1.2 added for scalling
 return perCent;
 }
 
@@ -560,7 +561,19 @@ const showSetting = () => {
         dayElement[0].classList.add('text-teal-600');
     }
 }
-    useEffect(() => {highlightCurrentDay()})
+useEffect(() => {highlightCurrentDay()})
+
+function checkScreenSize() {
+    if (window.innerWidth < 768) {
+        console.log("Screen size is 768px or smaller.");
+        setRecentSearch(false);
+    } else {
+        console.log("Screen size is larger than 768px.");
+        setRecentSearch(true);
+    }
+}
+
+window.addEventListener("resize", checkScreenSize);
 
   const defaultPage = (page) => {
       setDayPage(page);
@@ -574,6 +587,7 @@ const showSetting = () => {
             <Days 
                 data={data} checkCountry={checkCountry} 
                  Overview={Overview} indexHour={indexHour}
+                 setIndexHour={setIndexHour}
                  HourlyList={HourlyList} CurrentConditions={CurrentConditions}
                  defaultTempUnit={defaultTempUnit} 
                  dayIndex={dayIndex} tempSymbol={tempSymbol}
@@ -586,7 +600,6 @@ const showSetting = () => {
                  toKiloM={toKiloM}
                  baroPercent={baroPercent}
                  UVLevel={UVLevel}
-                 bttmAlign={bttmAlign}
                  getPhaseType={getPhaseType}
                  getPhaseInfo={getPhaseInfo}
                  hourMinFormat={hourMinFormat}
@@ -596,6 +609,7 @@ const showSetting = () => {
         </div>
     )
 }
+
    
   return (
     <motion.div initial="start"
@@ -671,14 +685,17 @@ const showSetting = () => {
 
                 <HourlyList 
                   data={data} dayIndex={dayIndex} indexHour={indexHour}
+                  setIndexHour={setIndexHour} recentSearch={recentSearch}
+                  setRecentSearch={setRecentSearch} hideSettings={hideSettings}
                   defaultTempUnit={defaultTempUnit} hourTimeRef={hourInfoRef}
                   hourInfoRef={hourInfoRef} showCurrentHour={showCurrentHour}
                   tempSymbol={tempSymbol} iconBasePath={iconBasePath} 
                   hourMinFormat={hourMinFormat}/>
 
-                <div className="daily forecast w-11/12 md:w-full bg-[rgba(229,229,229,.5)] p-3 mt-1 md:mt-0 mx-3 md:mx-0 md:mb-0 rounded-lg md:rounded-none ">
+                <div className="daily forecast w-11/12 md:w-full md:max-h-[710px] bg-[rgba(229,229,229,.5)] p-3 mt-1 md:mt-0 mx-3 md:mx-0 md:mb-0 rounded-lg md:rounded-none ">
 
-                    <div className="desc text-xl h-fit font-medium row-span-1 text-neutral-600 py-2"> Daily Forecast </div>
+                    <div className="desc text-xl h-fit font-medium row-span-1 text-neutral-600 py-2"> Daily Forecast  
+                    </div>
 
                     <ul className=" max-h-auto overflow-y-scroll">
                         {data.days.slice(0, 10).map((day, index) => (
@@ -702,6 +719,19 @@ const showSetting = () => {
                         ))}
                     </ul>
                 </div>
+
+                <div className="recents">
+                    <RecentSearches 
+                     data={data} setData={setData} 
+                     indexHour={indexHour} address={address}
+                     recentSearch={recentSearch} showSetting={showSetting}
+                     setRecentSearch={setRecentSearch}
+                     setIndexHour={setIndexHour}
+                     dayIndex={dayIndex}
+                     defaultTempUnit={defaultTempUnit} 
+                     tempSymbol={tempSymbol}
+                    />
+                </div>
                 
                 <CurrentConditions 
                   data={data} dayIndex={dayIndex} indexHour={indexHour}
@@ -720,14 +750,14 @@ const showSetting = () => {
                   />
         </div>
 
-            <span className="menu-butn absolute top-[13%] md:top-[18%] right-[2.5%] md:right-[1.25%]  translate-y-full text-sm z-50" onClick={showSetting}>
+            <span className="menu-butn absolute top-[12%] md:top-[20%] right-[2.5%] md:right-[1.25%]  translate-y-full text-sm  z-[60]" onClick={showSetting}>
                     <img src="/icons8-menu-vertical-24.png" 
                     className='active:opacity-70 bg-transparent p-1 rounded-full size-fit'
                     alt="" srcSet="" />
             </span>
 
             <div id='w-menu-card' 
-                className="w-menu-card hide-card absolute top-[10%] md:top-[13%] right-[5%] md:right-[2.5%]
+                className="w-menu-card hide-card absolute top-[9.5%] md:top-[13%] right-[5%] md:right-[2.5%]
                  translate-y-full border-2 border-gray-200 bg-[#ebebeb] w-fit h-fit px-2 py-3 rounded z-[50]"
                 onLoad={hideSettings}
                 >

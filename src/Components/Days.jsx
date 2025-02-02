@@ -9,7 +9,7 @@ import './days.css';
 
 function Days( {
     data,  Overview, 
-    HourlyList, dayIndex, 
+    HourlyList, dayIndex, indexHour, setIndexHour, 
     CurrentConditions,
     onPageUpdate, defaultTempUnit, tempSymbol, 
     hourMinFormat, precipType, 
@@ -19,10 +19,8 @@ function Days( {
     getPhaseType, getPhaseInfo  
 
 } ) {
-    const [indexHour, setIndexHour] = useState(0);
     const pageRef = useRef([]);
     const hourInfoRef = useRef([]);
-    const hourTimeRef = useRef([]);
 
     const iconBasePath = '/GWeatherIcons/';
 
@@ -71,11 +69,6 @@ function Days( {
                     block: 'center',
                 }
             )
-
-            if (hourTimeRef.current[indexHour]) {
-                hourTimeRef.current[indexHour].textContent = 'Now';
-                hourTimeRef.current[indexHour].style.color = '#0d9488';
-            }
         }
     };
     useEffect(() => {showCurrentHour()}, [data]);
@@ -110,6 +103,7 @@ function Days( {
                   
                 <HourlyList 
                   data={data} dayIndex={dayIndex} indexHour={indexHour}
+                  setIndexHour={setIndexHour}
                   defaultTempUnit={defaultTempUnit} hourTimeRef={hourInfoRef}
                   hourInfoRef={hourInfoRef}
                   tempSymbol={tempSymbol}  
