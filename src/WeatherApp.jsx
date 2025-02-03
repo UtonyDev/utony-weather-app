@@ -644,7 +644,7 @@ window.addEventListener("resize", tuckSettings);
             </div>
         ) : data && (
         <>
-            <div id="weather-app" className='weather-app-grid grid md: justify-items-center col-auto gap-5 md:gap-0 relative bg-[rgba(249,249,251,.3)] md:h-full z-20' 
+            <div id="weather-app" className='weather-app-grid grid md: justify-items-center col-auto gap-5 md:gap-0 relative bg-[rgba(249,249,251,.3)] md:h-full z-20 overflow-clip' 
                 onLoad={defaultTempUnit}
                 onClick={hideSettings}
              >
