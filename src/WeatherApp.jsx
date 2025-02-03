@@ -660,7 +660,7 @@ window.addEventListener("resize", tuckSettings);
                      placeholder={address} />
 
                 {suggestions.length > 0 && (
-                    <ul className=' absolute justify-self-center w-11/12 top-[3.15rem] text-zinc-800 bg-neutral-100 border-1 border-neutral-400 rounded-b-2xl overflow-y-clip z-[50]'>
+                    <ul className=' absolute justify-self-center w-11/12 top-[2.9em] md:top-[3.15rem] text-zinc-800 bg-neutral-100 border-1 border-neutral-400 rounded-b-2xl overflow-y-clip z-[50]'>
                         {suggestions.map((suggestion, index) => (
                             <li key={index} className={`p-1 flex text-neutral-950 text-[17px] font-normal hover:opacity-70 `} onClick={
                                  () => {
