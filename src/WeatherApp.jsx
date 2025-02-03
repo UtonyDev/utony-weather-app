@@ -28,6 +28,7 @@ function WeatherApp() {
   const [usUnit, setUSUnit] = useState(false);
   const [ukUnit, setUKUnit] = useState(false);
   const [recentSearch, setRecentSearch] = useState(false);
+  const [settingsZ, setSettingZ] = useState(false);
   const hourInfoRef = useRef([]); 
   const hourTimeRef = useRef([]);
   const dayRef = useRef([]);
@@ -563,17 +564,18 @@ const showSetting = () => {
 }
 useEffect(() => {highlightCurrentDay()})
 
-function checkScreenSize() {
+const tuckSettings = () => {
     if (window.innerWidth < 768) {
         console.log("Screen size is 768px or smaller.");
-        setRecentSearch(false);
+        setSettingZ(false);
     } else {
+        setSettingZ(true);
         console.log("Screen size is larger than 768px.");
-        setRecentSearch(true);
+        setRecentSearch(false);
     }
 }
 
-window.addEventListener("resize", checkScreenSize);
+window.addEventListener("resize", tuckSettings);
 
   const defaultPage = (page) => {
       setDayPage(page);
@@ -687,6 +689,8 @@ window.addEventListener("resize", checkScreenSize);
                   data={data} dayIndex={dayIndex} indexHour={indexHour}
                   setIndexHour={setIndexHour} recentSearch={recentSearch}
                   setRecentSearch={setRecentSearch} hideSettings={hideSettings}
+                  settingsZ={settingsZ}
+                     setSettingZ={setSettingZ}
                   defaultTempUnit={defaultTempUnit} hourTimeRef={hourInfoRef}
                   hourInfoRef={hourInfoRef} showCurrentHour={showCurrentHour}
                   tempSymbol={tempSymbol} iconBasePath={iconBasePath} 
@@ -727,7 +731,8 @@ window.addEventListener("resize", checkScreenSize);
                      recentSearch={recentSearch} showSetting={showSetting}
                      setRecentSearch={setRecentSearch}
                      setIndexHour={setIndexHour}
-                     dayIndex={dayIndex}
+                     dayIndex={dayIndex} settingsZ={settingsZ}
+                     setSettingZ={setSettingZ}
                      defaultTempUnit={defaultTempUnit} 
                      tempSymbol={tempSymbol}
                     />
@@ -750,7 +755,7 @@ window.addEventListener("resize", checkScreenSize);
                   />
         </div>
 
-            <span className="menu-butn absolute top-[12%] md:top-[20%] right-[2.5%] md:right-[1.25%]  translate-y-full text-sm  z-[60]" onClick={showSetting}>
+            <span className={`butn absolute top-[12%] md:top-[20%] right-[2.5%] md:right-[1.25%]  translate-y-full text-sm ${settingsZ ? 'z-[0]' : 'z-[60]'} `} onClick={showSetting}>
                     <img src="/icons8-menu-vertical-24.png" 
                     className='active:opacity-70 bg-transparent p-1 rounded-full size-fit'
                     alt="" srcSet="" />

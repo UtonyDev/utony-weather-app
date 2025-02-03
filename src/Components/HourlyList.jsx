@@ -7,7 +7,7 @@ import '../index.css';
 const HourlyList = ({ 
     data, dayIndex, showCurrentHour, indexHour, setIndexHour,
     recentSearch, setRecentSearch, hourMinFormat, defaultTempUnit,
-    tempSymbol, hourTimeRef, hourInfoRef, hideSettings
+    tempSymbol, hourTimeRef, hourInfoRef, settingsZ, setSettingZ
 }) => {
     const [highlightedHour, setHighlightedHour] = useState(0);
 
@@ -29,13 +29,14 @@ const HourlyList = ({
       }, [indexHour, highlightedHour]); // Run only when indexHour changes
 
     return (
-    <div className="hourly md:grid-rows-[32px_1fr] md:h-fit relative forecast grid grid-rows-1 justify-self-center w-11/12 md:w-[95%] md:mx-5 p-3 md:p-2 bg-[rgba(229,229,229,.5)] gap-1 shadow-md rounded-lg">
+    <div className="hourly md:grid-rows-[32px_1fr] md:h-fit mx-0 relative forecast grid grid-rows-1 justify-self-center w-11/12 md:w-[95%] md:mx-2 p-3 md:p-2 bg-[rgba(229,229,229,.5)] gap-1 shadow-md rounded-lg">
     <div className="desc text-[18px] font-medium md:h-fit flex justify-between text-neutral-600 "> Hourly Forecast 
     <img src="./history.ico" alt="" className="search-history size-5 md:hidden" 
         onClick={
             () => {
             setRecentSearch(true);
-            hideSettings()}
+            setSettingZ(true);
+            }
         } />
     </div>
     <ul className="flex p- overflow-x-auto whitespace-nowrap">
