@@ -29,6 +29,7 @@ function WeatherApp() {
   const [ukUnit, setUKUnit] = useState(false);
   const [recentSearch, setRecentSearch] = useState(false);
   const [settingsZ, setSettingZ] = useState(false);
+  const [passedCountry, setPassedCountry] = useState('');
   const hourInfoRef = useRef([]); 
   const hourTimeRef = useRef([]);
   const dayRef = useRef([]);
@@ -89,7 +90,9 @@ function WeatherApp() {
           const newcity = splitData[dayIndex];
           const newcountry = splitData[splitData.length - 1].trim();
           console.log(newcountry)
+          setPassedCountry(newcountry);
           fetchData(newcity, newcountry);
+
           if (userUnitPreference) {
               checkCountry(userUnitPreference);
               console.log('using user pref');
@@ -104,7 +107,7 @@ function WeatherApp() {
   const resetData = () => {
       localStorage.removeItem('weatherCache');
       localStorage.removeItem('userUnitPref');
-      window.location.reload()
+      window.location.reload();
   }
 
   useEffect(() => {
@@ -116,7 +119,7 @@ function WeatherApp() {
   
       // Check if there is any data in the cache
       if (Object.keys(cachedData).length > 0) {
-          const latestKey = Object.keys(cachedData)[Object.keys(cachedData).length - 1]; // Get the last added key
+          const latestKey = Object.keys(cachedData).at(-1);
           console.log(latestKey);
           const latestKeys = latestKey.split(':');
           var latestCountry = latestKeys[latestKeys.length - 1];
@@ -133,7 +136,7 @@ function WeatherApp() {
           } else {
               console.log('user hasnt set preference');
               let cacheLocation = latestData.resolvedAddress.split(',');
-              const cacheCountry = cacheLocation[cacheLocation.length -1];
+              const cacheCountry = cacheLocation[cacheLocation.length -1].trim();
               checkCountry(cacheCountry);    
           }
 
@@ -157,7 +160,6 @@ function WeatherApp() {
 
               // Current duration index being used
               const timezone = data.timezone;
-              console.log(timezone);
 
               const currentTime = new Intl.DateTimeFormat("en-US", {
                   timeZone: timezone,
@@ -167,7 +169,6 @@ function WeatherApp() {
 
               function parseCurrentTime(time) {
                   if (time.charAt(0) == 0) {
-                      console.log('yes theres a zero in front');
                       const parsedTime = time.slice(1);
                       return parsedTime;
                   } else {
@@ -203,7 +204,7 @@ function WeatherApp() {
   }, [data]); // Re-run the effect whenever 'data' changes
 
   // Function to fetch weather data.
-  const fetchData = useCallback(async (city, country) => {
+  const fetchData = async (city, country) => {
     console.log(country);
 
     // Store country in localStorage
@@ -250,7 +251,7 @@ function WeatherApp() {
         setPrompt(false); // End prompt state
         setLoading(false); // End loading state
     }
-}, []);
+}
 
   const convertCoordinates = async (latitude, longitude) => {
       const apiKey = '124d73669936416ea36f14503e262e7d';
@@ -320,9 +321,9 @@ function WeatherApp() {
           // Wait for checkboxes to exist
           const { customCheckBox1, customCheckBox2 } = await waitForCheckboxes();
   
-          const theUSA = ' United States of America';
+          const theUSA = 'United States of America';
           const theus = 'us';
-          const theUS = ' United States';
+          const theUS = 'United States';
           const theUKE = 'England';
           const theUK = 'United Kingdom';
   
@@ -495,22 +496,15 @@ const getPhaseInfo = (phase) => {
   if (phase > 0.75 && phase < 1) { return `Waning crescent`};
 }
  
- 
 const showSetting = () => {
     const settingElement = document.querySelector('#w-menu-card');
-
-    // Make sure to use the correct key for retrieving country from localStorage
-    let storedCountry;
-    const globalCountry = localStorage.getItem(storedCountry); // Use a string key
-    let parseGlobalCountry = globalCountry ? globalCountry.replace(/"/g, '') : null;
-
-    console.log(parseGlobalCountry);
+    console.log(passedCountry);
 
     if (userUnitPreference) {
         checkCountry(userUnitPreference);
         console.log('using user pref');
-    } else if (parseGlobalCountry) { // Ensure parseGlobalCountry is not null before using it
-        checkCountry(parseGlobalCountry);
+    } else if (passedCountry) { 
+        checkCountry(passedCountry);
         console.log('using location');
     } else {
         console.log("No country data available");
@@ -655,6 +649,7 @@ window.addEventListener("resize", tuckSettings);
                      className='search-icon search-bar justify-self-center w-11/12 text-md row-span-auto p-3 md:mt-1 rounded-full focus:rounded-full focus:scale-[1.025] focus:bg-[#F5F5F5] focus-within:outline-none border border-neutral-300 focus:border-neutral-400 text-neutral-700 text-base
                      tracking-[0.0125] font-normal z-[50]' 
                      name="place" id="place"
+                     onLoad={() => checkCountry(passedCountry)}
                      onChange={InputValChange}
                      onFocus={joinSuggestions()}
                      style={{
@@ -667,11 +662,12 @@ window.addEventListener("resize", tuckSettings);
                 {suggestions.length > 0 && (
                     <ul className=' absolute justify-self-center w-11/12 top-[3.15rem] text-zinc-800 bg-neutral-100 border-1 border-neutral-400 rounded-b-2xl overflow-y-clip z-[50]'>
                         {suggestions.map((suggestion, index) => (
-                            <li key={index} className={`p-1 text-neutral-950 text-[17px] font-normal hover:opacity-70 `} onClick={
+                            <li key={index} className={`p-1 flex text-neutral-950 text-[17px] font-normal hover:opacity-70 `} onClick={
                                  () => {
                                     setQuery(suggestion);
                                     setSuggestions([]);
                                     unformatLocation(index);
+                                    console.log(passedCountry)
                                     }
                                 }> <span className="search-image relative text-left "> <img src={`icons8-search-location-48.png`} alt="" srcSet="" className='size-5 inline ms-2' /> </span>
                                  <span className="suggestions relative w-[85%] left-1 text-justify">{suggestion}</span> </li>
@@ -732,7 +728,7 @@ window.addEventListener("resize", tuckSettings);
                      setRecentSearch={setRecentSearch}
                      setIndexHour={setIndexHour}
                      dayIndex={dayIndex} settingsZ={settingsZ}
-                     setSettingZ={setSettingZ}
+                     setSettingZ={setSettingZ} 
                      defaultTempUnit={defaultTempUnit} 
                      tempSymbol={tempSymbol}
                     />
@@ -762,7 +758,7 @@ window.addEventListener("resize", tuckSettings);
             </span>
 
             <div id='w-menu-card' 
-                className="w-menu-card hide-card absolute top-[9.5%] md:top-[13%] right-[5%] md:right-[2.5%]
+                className="w-menu-card hide-card absolute top-[9.5%] md:top-[15%] right-[5%] md:right-[2.5%]
                  translate-y-full border-2 border-gray-200 bg-[#ebebeb] w-fit h-fit px-2 py-3 rounded z-[50]"
                 onLoad={hideSettings}
                 >

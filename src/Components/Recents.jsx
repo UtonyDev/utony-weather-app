@@ -6,7 +6,7 @@ import { cache } from 'react';
 
 const RecentSearches = ({ 
     data, setData, defaultTempUnit, tempSymbol,
-    dayIndex, indexHour, recentSearch, setRecentSearch, setSettingZ
+    dayIndex, indexHour, recentSearch, setRecentSearch, setSettingZ, sendCurrentKey
  }) => {
     const [locationsData, setLocationsData] = useState([]); 
     const [currentKey, setCurrentKey] = useState(null);
@@ -40,7 +40,7 @@ const RecentSearches = ({
     }, [data, defaultTempUnit]); 
 
     return ( 
-        <div className='recents top-0 left-[0] min-w-full fixed h-screen  place-self-center bg-[#f1f1f1] md:w-full md:relative lg:w-[40vw] md:mx-0 md:h-full md:min-h-[500px] md:translate-x-[-100%] p-4 z-[150]'
+        <div className='recents top-0 left-[0] min-w-full fixed h-screen  place-self-center bg-[#f1f1f1] md:w-full md:relative lg:w-[40vw] md:mx-0 md:max-h-[532px] md:translate-x-[-100%] p-4 z-[150] overflow-y-scroll'
         style={{
             left: recentSearch ? '0' : '100%',
         }}>
