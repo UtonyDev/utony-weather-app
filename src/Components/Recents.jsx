@@ -39,6 +39,18 @@ const RecentSearches = ({
         }
     }, [data, defaultTempUnit]); 
 
+    const showSelectedData = () => {
+        if (screen.width <= 425) {
+            console.log('the screen is mobile')
+            setRecentSearch(false);
+            setSettingZ(false);
+        } else {
+            console.log('screen big');
+            setRecentSearch(true);
+            setSettingZ(false);
+        }
+    }
+
     return ( 
         <div className='recents top-0 left-[0] min-w-full fixed h-screen  place-self-center bg-[#f1f1f1] md:w-full md:relative lg:w-[40vw] md:mx-0 md:max-h-[532px] md:translate-x-[-100%] p-4 z-[150] overflow-y-scroll'
         style={{
@@ -60,6 +72,7 @@ const RecentSearches = ({
                         const selectedLocationData = cachedData[key];
                         setCurrentKey(key);
                         setData(selectedLocationData);
+                        showSelectedData();
                         setDefaultKey(false);
                         console.log(currentKey);
                     }}

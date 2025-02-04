@@ -1,13 +1,12 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useMemo } from 'react'
+import React from 'react';
 import './weather.css';
 import '../index.css';
 import '../App.css';
 
-function LocationForm({ fetchData, convertCoordinates }) {
+const LocationForm = React.memo(({ fetchData, convertCoordinates }) => {
     const [city, setCity] = useState('');
     const [country, setCountry] = useState('');
-    const [latitude, setLatitude] = useState('');
-    const [longitude, setLongitude] = useState('');
     const [loading, setLoading] = useState(false);
 
     const handleSubmit = (e) => {
@@ -94,6 +93,6 @@ function LocationForm({ fetchData, convertCoordinates }) {
     </div>
         </div>
     );
-    }
+    });
 
 export default LocationForm;

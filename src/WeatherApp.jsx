@@ -36,7 +36,7 @@ function WeatherApp() {
   const API_KEY = '124d73669936416ea36f14503e262e7d';
   let userUnitPreference = localStorage.getItem('userUnitPref');
 
-  const InputValChange = async (e) => {
+  const InputValChange = useCallback(async (e) => {
       const value = e.target.value;
       setQuery(value);
 
@@ -63,7 +63,7 @@ function WeatherApp() {
       } else {
           setSuggestions([]);
       }
-  }
+  });
 
   let searchBar = document.querySelector('.search-bar');
   const joinSuggestions = () => {
@@ -80,7 +80,7 @@ function WeatherApp() {
 }
   }
 
-  const unformatLocation = (index) => {
+  const unformatLocation = useCallback((index) => {
       const chosenList = holdResult[index];
       console.log(chosenList);
 
@@ -102,7 +102,7 @@ function WeatherApp() {
           }
           console.log('search length is:', splitData.length);
       }
-  }
+  })
 
   const resetData = () => {
       localStorage.removeItem('weatherCache');
@@ -204,7 +204,7 @@ function WeatherApp() {
   }, [data]); // Re-run the effect whenever 'data' changes
 
   // Function to fetch weather data.
-  const fetchData = async (city, country) => {
+  const fetchData = useCallback(async (city, country) => {
     console.log(country);
 
     // Store country in localStorage
@@ -251,7 +251,7 @@ function WeatherApp() {
         setPrompt(false); // End prompt state
         setLoading(false); // End loading state
     }
-}
+});
 
   const convertCoordinates = async (latitude, longitude) => {
       const apiKey = '124d73669936416ea36f14503e262e7d';
@@ -681,6 +681,8 @@ window.addEventListener("resize", tuckSettings);
                   indexHour={indexHour} defaultTempUnit={defaultTempUnit}
                   tempSymbol={tempSymbol} iconBasePath={iconBasePath} />
 
+                <div className="summary"></div>
+
                 <HourlyList 
                   data={data} dayIndex={dayIndex} indexHour={indexHour}
                   setIndexHour={setIndexHour} recentSearch={recentSearch}
@@ -753,7 +755,7 @@ window.addEventListener("resize", tuckSettings);
 
             <span className={`butn absolute top-[12%] md:top-[20%] right-[2.5%] md:right-[1.25%]  translate-y-full text-sm ${settingsZ ? 'z-[0]' : 'z-[60]'} `} onClick={showSetting}>
                     <img src="/icons8-menu-vertical-24.png" 
-                    className='active:opacity-70 bg-transparent p-1 rounded-full size-fit'
+                    className='active:opacity-70 bg-transparent p-1 rounded-full  size-8'
                     alt="" srcSet="" />
             </span>
 

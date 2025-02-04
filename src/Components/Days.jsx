@@ -1,3 +1,4 @@
+import React from 'react'; 
 import { useState, useRef, useEffect } from 'react';
 import Overview from './Overview';
 import HourlyList from './HourlyList';
@@ -7,7 +8,7 @@ import '../index.css';
 import '../App.css';
 import './days.css';
 
-function Days( {
+const Days = ({
     data,  Overview, 
     HourlyList, dayIndex, indexHour, setIndexHour, 
     CurrentConditions,
@@ -18,7 +19,7 @@ function Days( {
     baroPercent, UVLevel, bttmAlign, 
     getPhaseType, getPhaseInfo  
 
-} ) {
+} ) => {
     const pageRef = useRef([]);
     const hourInfoRef = useRef([]);
 

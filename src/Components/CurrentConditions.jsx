@@ -1,9 +1,9 @@
-import { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useMemo } from 'react';
 import './weather.css';
 import '../index.css';
 import '../App.css';
 
-const CurrentConditions = ({ 
+const CurrentConditions = React.memo(({ 
     data, dayIndex, indexHour, defaultTempUnit,
     hourMinFormat, precipType, bearingConversion, getHumidityColor, toKiloM, getHumidityBGColor, getHumidityTxtColor, baroPercent, UVLevel, getPhaseType, getPhaseInfo }) => {
 
@@ -173,5 +173,5 @@ const CurrentConditions = ({
     </div>    
 </div>
 );
-}
+});
  export default CurrentConditions;
