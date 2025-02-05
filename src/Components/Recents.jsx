@@ -41,25 +41,32 @@ const RecentSearches = ({
 
     const showSelectedData = () => {
         if (screen.width <= 425) {
-            console.log('the screen is mobile')
             setRecentSearch(false);
             setSettingZ(false);
+            return false;
         } else {
-            console.log('screen big');
             setRecentSearch(true);
             setSettingZ(false);
+            return true;
         }
     }
+    let screenWidth = window.screen.width;
+
+    console.log(screenWidth);
+    if (screenWidth > 425) {
+        console.log('large screen');
+        setRecentSearch(true);
+    }    
 
     return ( 
-        <div className='recents top-0 left-[0] min-w-full fixed h-screen  place-self-center bg-[#f1f1f1] md:w-full md:relative lg:w-[40vw] md:mx-0 md:max-h-[532px] md:translate-x-[-100%] p-4 z-[150] overflow-y-scroll'
+        <div className={`recents top-0 left-[0] min-w-full fixed h-screen place-self-center bg-[#f1f1f1] md:relative md:w-[40vw] md:mx-0 md:max-h-[532px] md:left-x-[0%] p-4 z-[150] overflow-y-scroll`}
         style={{
-            left: recentSearch ? '0' : '100%',
+            left: `${recentSearch ? '0%' : '100%'}`,
         }}>
         <div className="desc text-xl font-medium md:h-fit flex text-neutral-600">
             <img src="./icons8-back-24.png" alt="" className="back-to size-5  me-3  self-center md:hidden" 
             onClick={() => {
-                setRecentSearch(false)
+                showSelectedData();
                 setSettingZ(false);
             }}/> Recently Searched</div>
         <div className="locations flex flex-col-reverse">

@@ -617,7 +617,7 @@ window.addEventListener("resize", tuckSettings);
     id='target'>
         
         {loading ? (
-            <div className="bg-slate-50 place-items-center relative grid w-full h-screen">
+            <div className="bg-[#f1f1f1] place-items-center relative grid w-full h-screen">
                 <span className="absolute top-1/3 spinner"></span>
                 <div className="plead-message absolute top-[55%]">
                     Please hold on, this may take a while...
