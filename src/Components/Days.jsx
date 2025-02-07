@@ -5,13 +5,14 @@ import HourlyList from './HourlyList';
 import CurrentConditions from './CurrentConditions';
 import './weather.css';
 import '../index.css';
-import '../App.css';
+import '../weatherapp.css';
 import './days.css';
 
 const Days = ({
-    data,  Overview, 
+    data,  Overview, RecentSearches, setData,
     HourlyList, dayIndex, indexHour, setIndexHour, 
-    CurrentConditions,
+    address, recentSearch, showSetting, settingsZ,
+    setRecentSearch, setSettingZ, CurrentConditions,
     onPageUpdate, defaultTempUnit, tempSymbol, 
     hourMinFormat, precipType, 
     bearingConversion, getHumidityColor, 
@@ -104,7 +105,8 @@ const Days = ({
                   
                 <HourlyList 
                   data={data} dayIndex={dayIndex} indexHour={indexHour}
-                  setIndexHour={setIndexHour}
+                  setIndexHour={setIndexHour} setRecentSearch={setRecentSearch} 
+                  setSettingZ={setSettingZ}
                   defaultTempUnit={defaultTempUnit} hourTimeRef={hourInfoRef}
                   hourInfoRef={hourInfoRef}
                   tempSymbol={tempSymbol}  
@@ -125,6 +127,21 @@ const Days = ({
                   bttmAlign={bttmAlign}
                   getPhaseType={getPhaseType}
                   getPhaseInfo={getPhaseInfo}/>
+
+                <div className="recents">
+                    <RecentSearches 
+                    data={data} setData={setData} 
+                    indexHour={indexHour} address={address}
+                    recentSearch={recentSearch} showSetting={showSetting}
+                    setRecentSearch={setRecentSearch}
+                    setIndexHour={setIndexHour}
+                    dayIndex={dayIndex} settingsZ={settingsZ}
+                    setSettingZ={setSettingZ} 
+                    defaultTempUnit={defaultTempUnit} 
+                    tempSymbol={tempSymbol}
+                    />
+                </div>
+
             </div>
         </div>
     );

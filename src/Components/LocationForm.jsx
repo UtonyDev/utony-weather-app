@@ -2,7 +2,7 @@ import { useState, useRef, useEffect, useMemo } from 'react'
 import React from 'react';
 import './weather.css';
 import '../index.css';
-import '../App.css';
+import '../weatherapp.css';
 
 const LocationForm = React.memo(({ fetchData, convertCoordinates }) => {
     const [city, setCity] = useState('');

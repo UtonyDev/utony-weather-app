@@ -1,13 +1,13 @@
 import React, { useState, useRef, useEffect, useMemo } from 'react';
 import './weather.css';
 import '../index.css';
-import '../App.css';
+import '../weatherapp.css';
 
 const CurrentConditions = React.memo(({ 
     data, dayIndex, indexHour, defaultTempUnit,
-    hourMinFormat, precipType, bearingConversion, getHumidityColor, toKiloM, getHumidityBGColor, getHumidityTxtColor, baroPercent, UVLevel, getPhaseType, getPhaseInfo }) => {
+    hourMinFormat, precipType, bearingConversion, getHumidityColor, toKiloM, getHumidityBGColor, getHumidityTxtColor, baroPercent, UVLevel, getPhaseType, getPhaseInfo, position}) => {
 
-
+        console.log(indexHour); 
     return (
         <div className="current conditions justify-self-center w-11/12 relative md:w-[97%]">
         <div className="desc text-xl font-medium text-neutral-700  py-2 px-1"> Conditions </div>
@@ -149,21 +149,32 @@ const CurrentConditions = React.memo(({
         </div>
     </div>
     
-    <div className="phases grid row-auto grid-cols-2 col-span-2 w-full h-fit p-2 cards shadow-sm mt-8 align-middle bg-[rgba(229,229,229,.5)] relative bottom-[2%] rounded-lg ">
+    <div className="phases grid row-auto grid-cols-3 col-span-2 w-full h-fit p-2 cards shadow-sm mt-8 align-middle bg-[rgba(229,229,229,.5)] relative bottom-[2%] rounded-lg ">
         <div className="desc text-md font-light  text-[#333333] col-span-2"> Astro </div>
         
-        <div className="sun-phase col-span-1 row-span-2">
+        <div className="sun-phase col-start-1 col-end-1">
+
             <div className="sunrise ">
                 <h1 className=' font-normal text-[15px] text-[#505058]'> Sunrise </h1>
                 <p className='py-1 text-amber-700 '> {hourMinFormat(data.days[dayIndex].sunrise)} </p>
             </div>
+
             <div className="sunset ">
                 <h1 className=' font-normal text-[15px] text-[#505058]'> Sunset </h1>
                 <p className='py-1 text-amber-700'>{hourMinFormat(data.days[dayIndex].sunset)} </p>
             </div> 
         </div>
 
-        <div className="moon row-span-2 mx-10">
+        <div className="horizon-graph place-self-center relative">
+            <span className="celestial-body">
+                <img src={`/GWeatherIcons/clear-day.png`} alt="" className={`size-5 absolute  p-0 m-0 transition-transform `} 
+                style={{ left: `${position.x}px`, top: `${position.y}px` }}/>
+            </span>
+            <div className="semicircle border-1 rounded-tl-[40px] rounded-tr-[40px] border-b-1 border-neutral-500 w-[60px] h-[30px]"></div>
+        </div>
+
+
+        <div className="moon mx-10">
             <div className=" font-normal text-[15px] text-[#505058]"> Moon </div>
             <img src={`/moon-phases/${getPhaseType(data.days[dayIndex].moonphase)}.png`} alt="" srcSet="" />
             <h1 className="moon-info text-amber-700"> {getPhaseInfo(data.days[dayIndex].moonphase)} </h1>

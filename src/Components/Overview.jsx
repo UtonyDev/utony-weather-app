@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import './weather.css';
 import '../index.css';
-import '../App.css';
+import '../weatherapp.css';
 
 function Overview({ 
     data,  indexHour, defaultTempUnit, dayIndex ,

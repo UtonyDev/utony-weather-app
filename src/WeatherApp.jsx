@@ -7,8 +7,9 @@ import Overview from './Components/Overview';
 import Days from './Components/Days';
 import LocationForm from './Components/LocationForm';
 import RecentSearches from './Components/Recents';
+import { sin, cos, evaluate } from 'mathjs';
 import './Components/weather.css';
-import './App.css';
+import './weatherapp.css';
 import './index.css';
 import 'intersection-observer';
 
@@ -30,11 +31,13 @@ function WeatherApp() {
   const [recentSearch, setRecentSearch] = useState(false);
   const [settingsZ, setSettingZ] = useState(false);
   const [passedCountry, setPassedCountry] = useState('');
+  const [position, setPosition] = useState({ x: 0, y: 0 });
   const hourInfoRef = useRef([]); 
   const hourTimeRef = useRef([]);
   const dayRef = useRef([]);
   const API_KEY = '124d73669936416ea36f14503e262e7d';
   let userUnitPreference = localStorage.getItem('userUnitPref');
+  const iconBasePath = '/GWeatherIcons/';
 
   const InputValChange = useCallback(async (e) => {
       const value = e.target.value;
@@ -146,7 +149,6 @@ function WeatherApp() {
       }
   }, []);
 
-  const iconBasePath = '/GWeatherIcons/';
   useEffect(() => {
       if (data) {
   
@@ -400,7 +402,6 @@ function WeatherApp() {
       return realDate;
   };
 
-
   const estimatedPrecipChance = (prob) => {
     if (data) {
        const iteratedProbs = data.days[0].hours.map(hour => hour.precipprob);
@@ -495,6 +496,52 @@ const getPhaseInfo = (phase) => {
   if (phase == 0.75) { return `Last Quarter`};
   if (phase > 0.75 && phase < 1) { return `Waning crescent`};
 }
+
+useEffect(() => {
+    if (data) {
+    const sunPosition = (sunriseTime, sunsetTime) => {
+        const sunRise = sunriseTime.split(':');
+        const sunSet = sunsetTime.split(':');
+        console.log('sunrise hour and minute', sunRise[0], sunRise[1]);
+        // Convert from hour format to integer format
+        const T1 = parseFloat(sunRise[0]) + (parseFloat(sunRise[1]) / 60);
+        const T2 = parseFloat(sunSet[0]) + (parseFloat(sunSet[1]) / 60);
+    
+        console.log(T1,T2);
+    
+        if (parseFloat(indexHour) >= T1 && parseFloat(indexHour) <= T2) {
+            const angleInterval = [180, 0];
+            console.log(angleInterval[0]);
+            // Use linear interpolation to get value of angles at various time intervals (current time)
+        
+            const angle = angleInterval[0] + (((parseFloat(indexHour) - T1) * (angleInterval[0] - angleInterval[1])) / (T2 - T1));
+        
+            const angleDeg = angle;
+        
+            console.log('angley', angleDeg);
+        
+            const x = 20 + 30 * Math.cos(angleDeg * (Math.PI / 180));
+            const y = 20 + 30 * Math.sin(angleDeg * (Math.PI / 180));
+        
+            console.log('x, y', x, y);
+
+            setPosition({ x, y });
+        } else if (indexHour < T1 ) {
+            console.log('early morning');
+            const x = -15;
+            const y = 25;
+            setPosition({ x, y }) ;
+        } else if (indexHour > T2) {
+            console.log('late night');
+            const x = 55;
+            const y = 25;
+            setPosition({ x, y });
+        }
+    } 
+    sunPosition(data.days[dayIndex].sunrise, data.days[dayIndex].sunset)
+    }
+        }, [indexHour, recentSearch]);
+
  
 const showSetting = () => {
     const settingElement = document.querySelector('#w-menu-card');
@@ -560,17 +607,14 @@ useEffect(() => {highlightCurrentDay()})
 
 const tuckSettings = () => {
     if (window.innerWidth < 768) {
-        console.log("Screen size is 768px or smaller.");
         setSettingZ(false);
     } else {
         setSettingZ(true);
-        console.log("Screen size is larger than 768px.");
         setRecentSearch(false);
     }
 }
 
 window.addEventListener("resize", tuckSettings);
-
   const defaultPage = (page) => {
       setDayPage(page);
       checkCountry(userUnitPreference);
@@ -583,7 +627,11 @@ window.addEventListener("resize", tuckSettings);
             <Days 
                 data={data} checkCountry={checkCountry} 
                  Overview={Overview} indexHour={indexHour}
-                 setIndexHour={setIndexHour}
+                 RecentSearches={RecentSearches} address={address}
+                 recentSearch={recentSearch} showSetting={showSetting}
+                 settingsZ={settingsZ} sunPosition={sunPosition}
+                 setIndexHour={setIndexHour} setRecentSearch={setRecentSearch}
+                 setSettingZ={setSettingZ} setData={setData}
                  HourlyList={HourlyList} CurrentConditions={CurrentConditions}
                  defaultTempUnit={defaultTempUnit} 
                  dayIndex={dayIndex} tempSymbol={tempSymbol}
@@ -605,7 +653,6 @@ window.addEventListener("resize", tuckSettings);
         </div>
     )
 }
-
    
   return (
     <motion.div initial="start"
@@ -740,7 +787,8 @@ window.addEventListener("resize", tuckSettings);
                   data={data} dayIndex={dayIndex} indexHour={indexHour}
                   formatFullDay={formatFullDay} defaultTempUnit={defaultTempUnit}
                   showCurrentHour={showCurrentHour} hourMinFormat={hourMinFormat} 
-                  precipType={precipType} 
+                  precipType={precipType}
+                  position={position}
                   getHumidityBGColor={getHumidityBGColor}
                   getHumidityColor={getHumidityColor}
                   getHumidityTxtColor={getHumidityTxtColor}

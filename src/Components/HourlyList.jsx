@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion } from "framer-motion";
 import './weather.css';
-import '../App.css';
+import '../weatherapp.css';
 import '../index.css';
 
 const HourlyList = ({ 

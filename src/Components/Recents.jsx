@@ -1,5 +1,5 @@
 import './weather.css';
-import '../App.css';
+import '../weatherapp.css';
 import '../index.css';
 import { useEffect, useState, useRef } from 'react';
 import { cache } from 'react';
