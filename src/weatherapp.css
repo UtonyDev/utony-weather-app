@@ -14,7 +14,7 @@
   display: block;
 }
 
-@media (min-width:600px)  {
+@media (min-width: 768px)  {
    /* portrait tablets,*/
 .weather-app-grid {
   display: grid;

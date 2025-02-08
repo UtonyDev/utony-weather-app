@@ -167,10 +167,23 @@ const CurrentConditions = React.memo(({
 
         <div className="horizon-graph place-self-center relative">
             <span className="celestial-body">
-                <img src={`/GWeatherIcons/clear-day.png`} alt="" className={`size-5 absolute  p-0 m-0 transition-transform `} 
+                <img src={`/GWeatherIcons/clear-day.png`} alt="" className={`size-5 absolute  p-0 m-0 transition-all z-50`} 
                 style={{ left: `${position.x}px`, top: `${position.y}px` }}/>
             </span>
-            <div className="semicircle border-1 rounded-tl-[40px] rounded-tr-[40px] border-b-1 border-neutral-500 w-[60px] h-[30px]"></div>
+            <div className="graph flex flex-row relative">
+            <span className="dawn border-t-1 border-1 rounded-bl-0 rounded-br-[40px] w-[30px] h-[15px] absolute top-[30px] left-[-30px] border-neutral-500" 
+            style={{
+                background: `linear-gradient(to right, #64B5F6 ${position.x + 40}px, transparent ${position.x}px)`,
+            }}></span>
+            <div className="semicircle bg-sky-300 border-1 rounded-tl-[40px] rounded-tr-[40px] border-b-1 border-neutral-500 w-[60px] h-[30px]"
+            style={{
+                background: `linear-gradient(to right, #64B5F6 ${position.x + 10}px, transparent ${position.x}px)`,
+            }} ></div>
+            <span className="dusk border-t-1 border-1 rounded-bl-[40px] rounded-br-0 w-[30px] h-[15px] absolute top-[30px] left-[60px] border-neutral-500" 
+            style={{
+                background: `linear-gradient(to right, #64B5F6 ${position.x - 100 }px, transparent ${position.x}px)`,
+            }}></span>
+            </div>
         </div>
 
 

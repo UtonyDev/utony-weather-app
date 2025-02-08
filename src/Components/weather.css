@@ -17,6 +17,9 @@ svg.reset {
     box-shadow: none;
 }
 
+.recents-tab {
+  left: 100%;
+}
 
 .spinner {
     width: 100px;
@@ -25,13 +28,18 @@ svg.reset {
     border-top: 5px solid teal; /* Teal border */
     border-radius: 50%;
     animation: spin .6s linear infinite;
-  }
-  
-  @keyframes spin {
+}
+@keyframes spin {
     0% {
       transform: rotate(0deg);
     }
     100% {
       transform: rotate(360deg);
     }
+}
+
+@media (min-width:600px)  {
+  .recents-tab {
+    left: 0;
   }
+}

@@ -7,7 +7,7 @@ import Overview from './Components/Overview';
 import Days from './Components/Days';
 import LocationForm from './Components/LocationForm';
 import RecentSearches from './Components/Recents';
-import { sin, cos, evaluate } from 'mathjs';
+import { sin, cos, evaluate, index } from 'mathjs';
 import './Components/weather.css';
 import './weatherapp.css';
 import './index.css';
@@ -32,8 +32,10 @@ function WeatherApp() {
   const [settingsZ, setSettingZ] = useState(false);
   const [passedCountry, setPassedCountry] = useState('');
   const [position, setPosition] = useState({ x: 0, y: 0 });
-  const hourInfoRef = useRef([]); 
-  const hourTimeRef = useRef([]);
+  const listContainer = useRef(null);
+  const hourInfoRefs = useRef([]); 
+  const hourTimeRef = useRef(null);
+  const recentsRef = useRef(null);
   const dayRef = useRef([]);
   const API_KEY = '124d73669936416ea36f14503e262e7d';
   let userUnitPreference = localStorage.getItem('userUnitPref');
@@ -515,26 +517,48 @@ useEffect(() => {
             // Use linear interpolation to get value of angles at various time intervals (current time)
         
             const angle = angleInterval[0] + (((parseFloat(indexHour) - T1) * (angleInterval[0] - angleInterval[1])) / (T2 - T1));
+            console.log('angley', angle);
         
-            const angleDeg = angle;
-        
-            console.log('angley', angleDeg);
-        
-            const x = 20 + 30 * Math.cos(angleDeg * (Math.PI / 180));
-            const y = 20 + 30 * Math.sin(angleDeg * (Math.PI / 180));
+            const x = 20 + 30 * Math.cos(angle * (Math.PI / 180));
+            const y = 20 + 30 * Math.sin(angle * (Math.PI / 180));
         
             console.log('x, y', x, y);
 
             setPosition({ x, y });
         } else if (indexHour < T1 ) {
             console.log('early morning');
-            const x = -15;
-            const y = 25;
-            setPosition({ x, y }) ;
+            const t1 = 1;
+            const t2 = parseFloat(sunRise[0]) + (parseFloat(sunRise[1]) / 60);
+            console.log(t2)
+            // For left ellipse 
+            const angleInterval = [90, 0];
+            // Use linear interpolation to get value of angles at various time intervals (current time)
+            const angle = angleInterval[0] + (((parseInt(indexHour) - t1) * (angleInterval[1] - angleInterval[0])) / (t2 - t1));
+            console.log('angle', angle);
+        
+            const x = (30 * Math.cos(angle * (Math.PI / 180))) - 40;
+            const y = (15 * Math.sin(angle * (Math.PI / 180))) + 20;
+        
+            console.log('x, y', x, y);
+
+            setPosition({ x, y });
+    
         } else if (indexHour > T2) {
             console.log('late night');
-            const x = 55;
-            const y = 25;
+            const tr1 = 24;
+            const tr2 = parseFloat(sunSet[0]) + (parseFloat(sunSet[1]) / 60);
+            console.log(tr1)
+            // For right ellipse 
+            const angleInterval = [90, 180];
+            // Use linear interpolation to get value of angles at various time intervals (current time)
+            const angle = angleInterval[0] + (((parseInt(indexHour) - tr1) * (angleInterval[1] - angleInterval[0])) / (tr2 - tr1));
+            console.log('angle', angle);
+        
+            const x = (30 * Math.cos(angle * (Math.PI / 180))) + 80;
+            const y = (15 * Math.sin(angle * (Math.PI / 180))) + 20;
+        
+            console.log('x, y', x, y);
+
             setPosition({ x, y });
         }
     } 
@@ -574,21 +598,21 @@ const showSetting = () => {
   }
  
   const showCurrentHour = () => {
-      if (hourInfoRef.current.length > 0) {
-          hourInfoRef.current[indexHour].scrollIntoView({
-              behavior: 'instant',
-              block: 'nearest',
-              inline: 'start',
-          });
-          
-          if (hourTimeRef.current[indexHour]) {
-              hourTimeRef.current[indexHour].textContent = 'Now';
-              hourTimeRef.current[indexHour].style.color = '#0d9488';
-              if (dayPage === false) {
-              dayRef.current[dayIndex].textContent = 'Today';
-              dayRef.current[dayIndex].style.color = '#0d9488';
-              }
-          }
+      if (listContainer.current) {
+        console.log('container exists');
+        const listItem = hourInfoRefs.current[indexHour];
+        const listcontainer = listContainer.current;
+        listcontainer.scrollTo({
+            left: listItem.offsetLeft - listcontainer.offsetLeft,
+            behavior: "smooth", // Enables smooth scrolling
+        });
+        
+        if (hourTimeRef.current[indexHour]) {
+            if (dayPage === false) {
+            dayRef.current[dayIndex].textContent = 'Today';
+            dayRef.current[dayIndex].style.color = '#0d9488';
+            }
+        }
       } else {
           console.log('elemnt doesnt exist yet')
       }
@@ -605,16 +629,20 @@ const showSetting = () => {
 }
 useEffect(() => {highlightCurrentDay()})
 
-const tuckSettings = () => {
+const showRecentSearch = () => {
     if (window.innerWidth < 768) {
-        setSettingZ(false);
-    } else {
-        setSettingZ(true);
-        setRecentSearch(false);
+        recentsRef.current.style.left = 0;
     }
 }
 
-window.addEventListener("resize", tuckSettings);
+const hideRecentSearch = () => {
+    if (window.innerWidth < 768) {
+        recentsRef.current.style.left = '100%';
+    } else {
+        recentsRef.current.style.left = '0';
+    }
+}
+
   const defaultPage = (page) => {
       setDayPage(page);
       checkCountry(userUnitPreference);
@@ -731,13 +759,13 @@ window.addEventListener("resize", tuckSettings);
                 <div className="summary"></div>
 
                 <HourlyList 
-                  data={data} dayIndex={dayIndex} indexHour={indexHour}
-                  setIndexHour={setIndexHour} recentSearch={recentSearch}
-                  setRecentSearch={setRecentSearch} hideSettings={hideSettings}
-                  settingsZ={settingsZ}
-                     setSettingZ={setSettingZ}
-                  defaultTempUnit={defaultTempUnit} hourTimeRef={hourInfoRef}
-                  hourInfoRef={hourInfoRef} showCurrentHour={showCurrentHour}
+                  data={data} dayIndex={dayIndex} indexHour={indexHour} ref={{ listContainer, hourTimeRef }}
+                  hourInfoRef={hourInfoRefs}
+                  setIndexHour={setIndexHour} showRecentSearch={showRecentSearch}
+                  hideRecentSearch={hideRecentSearch} hideSettings={hideSettings}
+                  settingsZ={settingsZ} setSettingZ={setSettingZ}
+                  defaultTempUnit={defaultTempUnit} 
+                  showCurrentHour={showCurrentHour}
                   tempSymbol={tempSymbol} iconBasePath={iconBasePath} 
                   hourMinFormat={hourMinFormat}/>
 
@@ -772,9 +800,9 @@ window.addEventListener("resize", tuckSettings);
                 <div className="recents">
                     <RecentSearches 
                      data={data} setData={setData} 
-                     indexHour={indexHour} address={address}
+                     indexHour={indexHour} address={address} ref={recentsRef}
                      recentSearch={recentSearch} showSetting={showSetting}
-                     setRecentSearch={setRecentSearch}
+                     hideRecentSearch={hideRecentSearch}
                      setIndexHour={setIndexHour}
                      dayIndex={dayIndex} settingsZ={settingsZ}
                      setSettingZ={setSettingZ} 
