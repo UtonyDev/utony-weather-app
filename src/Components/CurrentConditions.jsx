@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect, useMemo } from 'react';
 import './weather.css';
 import '../index.css';
-import '../weatherapp.css';
+import '../App.css';
 
 const CurrentConditions = React.memo(({ 
     data, dayIndex, indexHour, defaultTempUnit,
@@ -10,12 +10,12 @@ const CurrentConditions = React.memo(({
         console.log(indexHour); 
     return (
         <div className="current conditions justify-self-center w-11/12 relative md:w-[97%]">
-        <div className="desc text-xl font-medium text-neutral-700  py-2 px-1"> Conditions </div>
+        <div className="desc text-[18px]/6 font-normal text-black py-2 ps-2"> Conditions </div>
     <div className="weather-elements p-0 flex flex-wrap w-full justify-around">
 
         <div className="card-column flex-1/2 basis-[44vw] ps-1 pe-2 max-w-1/2 md:flex-1/3 md:max-w-[32%]">
-            <div className="precip cards shadow-sm mt-4 p-2 align-middle bg-[rgba(229,229,229,.5)] w-full min-h-[275px] md:min-h-[225px] rounded-lg ">
-            <div className="desc text-lg font-medium text-neutral-700">Precipitaion</div>
+            <div className="precip cards shadow-sm mt-4 p-2 align-middle bg-[#e5e5e580] w-full min-h-[275px] md:min-h-[225px] rounded-lg ">
+            <div className="desc text-base/4 font-normal text-[#404C4F]">Precipitation</div>
                     <p className='ps-1 pe-2 py-3 text-3xl font-normal text-blue-500'> {Math.round(data.days[dayIndex].hours[indexHour].precipprob)}% </p>
                     <p className="raininfo my-2 text-sm text-neutral-700">Chance of rain</p>
                     <hr className='my-2 text-neutral-200' />                  
@@ -25,7 +25,7 @@ const CurrentConditions = React.memo(({
 
         <div className="card-column flex-1/2 basis-[44vw] ps-1 pe-2 max-w-1/2 md:flex-1/3 md:max-w-[32%]">
             <div className="humid cards shadow-sm mt-4 p-2 align-middle bg-[rgba(229,229,229,.5)] w-full min-h-[275px] md:min-h-[225px] rounded-lg " >
-                        <div className="desc text-lg font-medium text-neutral-700"> Humidity </div>
+                        <div className="desc text-base/4 font-normal text-[#404C4F]"> Humidity </div>
                         <div className="humid-meter place-self-center">
                             <div className="ms-4 mt-2 text-sm text-zinc-400">100</div>
                             <p className={`auto grid-xl-zinc-200 shadow-lg relative px-6 h-20 w-fit m-1 rounded-full overflow-hidden transition-all`}
@@ -53,15 +53,15 @@ const CurrentConditions = React.memo(({
         </div>
 
         <div className="card-column flex-1/2 basis-[44vw] ps-1 pe-2 max-w-1/2 md:flex-1/3 md:max-w-[32%]">
-            <div className="pressure cards shadow-sm mt-4 p-2 align-middle bg-[#F1F1F1] w-full min-h-[275px] md:min-h-[225px] rounded-lg md:h-[192px]">
-                <div className="desc text-lg font-medium text-neutral-700"> Pressure </div>
+            <div className="pressure cards shadow-sm mt-4 p-2 align-middle bg-[#e5e5e580] w-full min-h-[275px] md:min-h-[225px] rounded-lg md:h-[192px]">
+                <div className="desc text-base/4 font-normal text-[#404C4F]"> Pressure </div>
                 <div className="pressure-meter place-self-center mt-6">
                     <div className="p_ring relative w-16 h-16 m-2 rounded-full">
-                    <span className="block absolute z-[50] bottom-0 top-[55%] left-[25%] right-0 h-1/4 w-1/2 mt-4 bg-[#F1F1F1] rounded-full " aria-hidden="true"></span>
+                    
                     <div className="progress absolute w-full h-full rounded-full transition-all"
                     style={{
                         background: `conic-gradient(
-                        from 150deg,
+                        from 195deg,
                         #0ea5e9 20%,
                         #0ea5e9 ${baroPercent(data.days[dayIndex].hours[indexHour].pressure)}%,
                         #bae6fd 50%,
@@ -83,7 +83,7 @@ const CurrentConditions = React.memo(({
 
         <div className="card-column flex-1/2 basis-[44vw] ps-1 pe-2 max-w-1/2 md:flex-1/3 md:max-w-[32%]">
             <div className="wind cards shadow-sm mt-4 p-2 align-middle bg-[rgba(229,229,229,.5)] relative w-full min-h-[275px] md:min-h-[200px] rounded-lg ">
-                <div className="desc text-lg font-medium text-neutral-700 bold">Wind</div>
+                <div className="desc text-base/4 font-normal text-[#404C4F] bold">Wind</div>
 
                 <div className="compass grid">
                     <div className="north text-sm  justify-self-center text-zinc-400">N</div>
@@ -111,7 +111,7 @@ const CurrentConditions = React.memo(({
         
         <div className="card-column flex-1/2 basis-[44vw] ps-1 pe-2 max-w-1/2 md:flex-1/3 md:max-w-[32%]">
             <div className="visible cards shadow-sm mt-4 p-2 relative w-full md:h-[192px] align-middle bg-[rgba(229,229,229,0.5)] min-h-[275px] md:min-h-[225px] rounded-lg">
-                    <div className="desc text-lg font-medium text-neutral-700">Visibility</div>
+                    <div className="desc text-base/4 font-normal text-[#404C4F]">Visibility</div>
                     <img src="/horizon.png" alt="" className="m-4" />
                     <p className=' text-neutral-700 font-normal font-sans'> <img src="/visibility.png" alt="" className='me-1 inline-block'/>
                         {toKiloM(data.days[dayIndex].hours[indexHour].visibility)} km
@@ -124,7 +124,7 @@ const CurrentConditions = React.memo(({
     
         <div className="card-column flex-1/2 basis-[44vw] ps-1 pe-2 max-w-1/2 md:flex-1/3 md:max-w-[32%]">
             <div className="solar cards shadow-sm w-full mt-4 p-2 align-middle bg-[rgba(229,229,229,.5)] relative min-h-[275px] rounded-lg md:min-h-[225px]">
-                    <div className="desc text-lg font-medium text-neutral-700 bold">UV Index</div>
+                    <div className="desc text-base/4 font-normal text-[#404C4F]">UV Index</div>
 
                     <div className="uvmeter relative place-self-center p-1 h-fit">
                     <div className="ms-8 relative top-3 text-sm text-zinc-400">11+</div>
@@ -149,19 +149,19 @@ const CurrentConditions = React.memo(({
         </div>
     </div>
     
-    <div className="phases grid row-auto grid-cols-3 col-span-2 w-full h-fit p-2 cards shadow-sm mt-8 align-middle bg-[rgba(229,229,229,.5)] relative bottom-[2%] rounded-lg ">
-        <div className="desc text-md font-light  text-[#333333] col-span-2"> Astro </div>
+    <div className="phases grid row-auto grid-cols-3 col-span-2 w-[98%] h-fit p-2 cards shadow-sm mt-8 align-middle bg-[rgba(229,229,229,.5)] place-self-center relative bottom-[2%] rounded-lg ">
+        <div className="desc text-base font-normal text-[#404C4F]"> Astro </div>
         
         <div className="sun-phase col-start-1 col-end-1">
 
             <div className="sunrise ">
                 <h1 className=' font-normal text-[15px] text-[#505058]'> Sunrise </h1>
-                <p className='py-1 text-amber-700 '> {hourMinFormat(data.days[dayIndex].sunrise)} </p>
+                <p className='py-1 text-[16px] font-medium text-amber-800 '> {hourMinFormat(data.days[dayIndex].sunrise)} </p>
             </div>
 
             <div className="sunset ">
                 <h1 className=' font-normal text-[15px] text-[#505058]'> Sunset </h1>
-                <p className='py-1 text-amber-700'>{hourMinFormat(data.days[dayIndex].sunset)} </p>
+                <p className='py-1 text-[16px] font-medium text-amber-800'>{hourMinFormat(data.days[dayIndex].sunset)} </p>
             </div> 
         </div>
 
@@ -187,10 +187,10 @@ const CurrentConditions = React.memo(({
         </div>
 
 
-        <div className="moon mx-10">
+        <div className="moon mx-5">
             <div className=" font-normal text-[15px] text-[#505058]"> Moon </div>
             <img src={`/moon-phases/${getPhaseType(data.days[dayIndex].moonphase)}.png`} alt="" srcSet="" />
-            <h1 className="moon-info text-amber-700"> {getPhaseInfo(data.days[dayIndex].moonphase)} </h1>
+            <h1 className="moon-info font-medium text-amber-800"> {getPhaseInfo(data.days[dayIndex].moonphase)} </h1>
 
         </div>
                     

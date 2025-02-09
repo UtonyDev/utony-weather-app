@@ -1,7 +1,8 @@
 import "./weather.css";
-import "../weatherapp.css";
+import "../App.css";
 import "../index.css";
 import React, { forwardRef, useEffect, useState } from "react";
+import { px } from "framer-motion";
 
 const RecentSearches = forwardRef(
   (
@@ -14,6 +15,7 @@ const RecentSearches = forwardRef(
       indexHour,
       setSettingZ,
       hideRecentSearch,
+      showRecentSearch,
     },
     ref // Forwarded ref from parent
   ) => {
@@ -64,10 +66,10 @@ const RecentSearches = forwardRef(
 
     return (
       <div
-        className={`recents-tab top-0 left-[0] min-w-full fixed h-screen place-self-center bg-[#f1f1f1] md:relative md:w-[40vw] md:mx-0 md:max-h-[532px] md:left-x-[0%] p-4 z-[150] overflow-y-scroll`}
+        className={`recents-tab top-0 left-[0] min-w-full fixed h-screen place-self-center bg-[rgba(229,229,229,.5)] md:relative md:w-[40vw] md:mx-0 md:max-h-[532px] md:left-x-[0%] p-4 z-[150] overflow-y-scroll`}
         ref={ref} // Assign the forwarded ref to the div
       >
-        <div className="desc text-xl font-medium md:h-fit flex text-neutral-600">
+        <div className="desc text-[17px] h-fit font-medium text-[#404C4F]">
           <img
             src="./icons8-back-24.png"
             alt=""
@@ -96,8 +98,8 @@ const RecentSearches = forwardRef(
                 }}
                 className={`location-tab bg-[#F9F9FB] p-2 rounded-lg border-1 border-gray-200 my-2`}
                 style={{
-                    backgroundColor: locationKey === key ? '#cbfbf1' : '#F9F9FB', 
-                    border: locationKey === key || (index === locationsData.length - 1 && defaultKey) ? '1px solid #00BCD4' : 'none', 
+                    backgroundColor: locationKey === key ? '#d7f3ed' : '#F9F9FB', 
+                    
                 }}
               >
                 <h3 className="title mb-3 text-neutral-700 font-normal">

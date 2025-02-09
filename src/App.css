@@ -1,10 +1,12 @@
-
+body {
+  background-image: url('/cloudy-backdrop.jpg');
+}
 
 .search-icon {
     padding: 7.5px 7.5px 7.5px 35px;
     background: url("/icons8-search-location-48.png") no-repeat 12px center;
     background-size: 1.2em; /* Adjust icon size */
-    background-color: #F9F9FB;
+    background-color: #e5e5e5;
   }
 
 .hide-card {

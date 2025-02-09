@@ -9,7 +9,7 @@ import LocationForm from './Components/LocationForm';
 import RecentSearches from './Components/Recents';
 import { sin, cos, evaluate, index } from 'mathjs';
 import './Components/weather.css';
-import './weatherapp.css';
+import './App.css';
 import './index.css';
 import 'intersection-observer';
 
@@ -769,9 +769,9 @@ const hideRecentSearch = () => {
                   tempSymbol={tempSymbol} iconBasePath={iconBasePath} 
                   hourMinFormat={hourMinFormat}/>
 
-                <div className="daily forecast w-11/12 md:w-full md:max-h-[710px] bg-[rgba(229,229,229,.5)] p-3 mt-1 md:mt-0 mx-3 md:mx-0 md:mb-0 rounded-lg md:rounded-none ">
+                <div className="daily forecast w-11/12 md:w-full md:max-h-[710px] bg-[#e5e5e580] p-3 mt-1 md:mt-0 mx-3 md:mx-0 md:mb-0 rounded-lg md:rounded-none ">
 
-                    <div className="desc text-xl h-fit font-medium row-span-1 text-neutral-600 py-2"> Daily Forecast  
+                    <div className="desc text-[17px] h-fit font-medium text-[#404C4F] py-2"> Daily Forecast  
                     </div>
 
                     <ul className=" max-h-auto overflow-y-scroll">
@@ -786,9 +786,9 @@ const hideRecentSearch = () => {
                                     updateDayIndex(index);
                                 }}>
 
-                                <p className='day-element inline-block text-[#505058] font-medium tracking-wide text-base p-1 w-fit h-fit' ref={(el) => (dayRef.current[index]) = el }>{formatFullDay(data.days[index].datetime)}</p>
+                                <p className='day-element inline-block text-[#404C4F] font-normal tracking-wide text-base p-1 w-fit h-fit' ref={(el) => (dayRef.current[index]) = el }>{formatFullDay(data.days[index].datetime)}</p>
                                 <span className="dayInfo justify-self-end ">
-                                <p className='inline-block text-[#008080] font-sans font-medium tracking-wide text-base  px-2'>{defaultTempUnit(day.temp)}{tempSymbol(symb)}</p>
+                                <p className='inline-block text-teal-900 font-base tracking-wide text-base px-2'>{defaultTempUnit(day.temp)}{tempSymbol(symb)}</p>
                                 <p className='inline-block text-[#505058] font-sans font-normal tracking-wide text-base px-2'>{index === 0 ? estimatedPrecipChance(day.precipprob) : Math.round(day.precipprob)}%</p>
                                 <p className="inline-block"> <img src={`${iconBasePath}${day.icon}.png`} alt="" className="src size-5" /> </p>
                                 </span>
@@ -803,6 +803,7 @@ const hideRecentSearch = () => {
                      indexHour={indexHour} address={address} ref={recentsRef}
                      recentSearch={recentSearch} showSetting={showSetting}
                      hideRecentSearch={hideRecentSearch}
+                     showRecentSearch={showRecentSearch}
                      setIndexHour={setIndexHour}
                      dayIndex={dayIndex} settingsZ={settingsZ}
                      setSettingZ={setSettingZ} 
@@ -847,12 +848,12 @@ const hideRecentSearch = () => {
                             className="units check-button1"
                             onClick={checkActionCels}
                             >
-                            <input type="radio" className='custom-checkbox1 pe-4 text-base font-medium text-[#333333]' name="celsius" value={'metric'}  /><span></span>Celsius</p>
+                            <input type="radio" className='custom-checkbox1 pe-4 me-1 text-base font-medium text-[#333333]' name="celsius" value={'metric'}  /><span></span>Celsius</p>
                         <p 
                             className="units check-button2"
                             onClick={checkActionFahr}
                             >
-                            <input type="radio" className='custom-checkbox2 pe-4 text-base font-medium text-[#333333]' name="fahrenhait" value={'us'} /> <span></span>Fahrenhait</p>
+                            <input type="radio" className='custom-checkbox2 pe-4 me-1 text-base font-medium text-[#333333]' name="fahrenhait" value={'us'} /> Fahrenhait</p>
                     </label>
                 </div>
                 <button className="px-1 text-sm relative top-1 w-fit shadow-none active:opacity-70 text-red-600" onClick={resetData}> Reset</button>

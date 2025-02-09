@@ -5,7 +5,7 @@ import HourlyList from './HourlyList';
 import CurrentConditions from './CurrentConditions';
 import './weather.css';
 import '../index.css';
-import '../weatherapp.css';
+import '../App.css';
 import './days.css';
 
 const Days = ({

@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import React, { forwardRef } from "react";
 import { motion } from "framer-motion";
 import "./weather.css";
-import "../weatherapp.css";
+import "../App.css";
 import "../index.css";
 
 const HourlyList = forwardRef(
@@ -52,8 +52,8 @@ const HourlyList = forwardRef(
     }, [indexHour, highlightedHour]);
 
     return (
-      <div className="hourly md:grid-rows-[32px_1fr] md:h-fit mx-0 relative forecast grid grid-rows-1 justify-self-center w-11/12 md:w-[95%] md:mx-2 p-3 md:p-2 bg-[rgba(229,229,229,.5)] gap-1 shadow-md rounded-lg">
-        <div className="desc text-[18px] font-medium md:h-fit flex justify-between text-neutral-600">
+      <div className="hourly md:grid-rows-[32px_1fr] md:h-fit mx-0 relative forecast grid grid-rows-1 justify-self-center w-11/12 md:w-[95%] md:mx-2 p-3 md:p-2 bg-[#e5e5e580] gap-1 shadow-md rounded-lg">
+        <div className="desc text-[17px] font-medium md:h-fit flex justify-between text-[#404C4F]">
           Hourly Forecast
           <img
             src="./history.ico"
