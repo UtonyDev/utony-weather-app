@@ -69,7 +69,7 @@ const RecentSearches = forwardRef(
         className={`recents-tab top-0 left-[0] min-w-full fixed h-screen place-self-center bg-[#e5e5e5] md:bg-[#e5e5e580] md:relative md:w-[40vw] md:mx-0 md:max-h-[532px] md:left-x-[0%] p-4 z-[150] overflow-y-scroll`}
         ref={ref} // Assign the forwarded ref to the div
       >
-        <div className="desc text-[17px] h-fit font-medium text-[#404C4F]">
+        <div className="desc md:text-[17px] text-lg flex bg-[#e5e5e5] md:bg-transparent w-full h-fit font-medium text-[#404C4F]">
           <img
             src="./icons8-back-24.png"
             alt=""
