@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback} from 'react';
 import { motion } from "framer-motion";
 import axios from "axios";
+import { debounce } from 'lodash';
 import CurrentConditions from './Components/CurrentConditions';
 import HourlyList from './Components/HourlyList';
 import Overview from './Components/Overview';
@@ -32,11 +33,13 @@ function WeatherApp() {
   const [settingsZ, setSettingZ] = useState(false);
   const [passedCountry, setPassedCountry] = useState('');
   const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [tabWidth, setTabWidth] = useState(0);
   const listContainer = useRef(null);
   const hourInfoRefs = useRef([]); 
   const hourTimeRef = useRef(null);
   const recentsRef = useRef(null);
   const dayRef = useRef([]);
+  const tabRef = useRef(null);
   const API_KEY = '124d73669936416ea36f14503e262e7d';
   let userUnitPreference = localStorage.getItem('userUnitPref');
   const iconBasePath = '/GWeatherIcons/';
@@ -119,30 +122,42 @@ function WeatherApp() {
       // Retrieve the weather cache object from localStorage
       const weatherCacheKey = 'weatherCache';
       const cachedData = JSON.parse(localStorage.getItem(weatherCacheKey)) || {};
+      const savedCacheKey = 'savedKey';
+      let userPreferedCountry = JSON.parse(localStorage.getItem(savedCacheKey));
+      let userPreferedKey = String(userPreferedCountry)
+      .replace(/"/g, "").replace(/,([^,]*)$/, ",$1").trim();
+
+      console.log("the user prefers:", userPreferedKey);
   
       console.log('Cached data:', cachedData);
   
       // Check if there is any data in the cache
       if (Object.keys(cachedData).length > 0) {
-          const latestKey = Object.keys(cachedData).at(-1);
-          console.log(latestKey);
-          const latestKeys = latestKey.split(':');
-          var latestCountry = latestKeys[latestKeys.length - 1];
-          
-          let latestData = cachedData[latestKey];
-  
-          setData(latestData); // Use the most recent cached data for rendering
-          console.log('Using cached data from weatherCache:', latestData);
+        const latestKey = Object.keys(cachedData).at(-1);
+        console.log(latestKey);
+        let latestData = cachedData[latestKey];
+       
+        if (userPreferedKey.length > 0 && userPreferedKey != null ) {
+            let userPreferedData = cachedData[userPreferedKey]
+            console.log("the user prefers the data:", userPreferedData);
+            setData(userPreferedData);
+        } else {
+            setData(latestData); 
+            console.log('Using cached data from weatherCache:', latestData);
           console.log(latestData.resolvedAddress);
-
+        }
+        
           if (userUnitPreference) {
               checkCountry(userUnitPreference);
               console.log('the user prefers: ', userUnitPreference);
           } else {
               console.log('user hasnt set preference');
-              let cacheLocation = latestData.resolvedAddress.split(',');
-              const cacheCountry = cacheLocation[cacheLocation.length -1].trim();
-              checkCountry(cacheCountry);    
+              if (latestData.length > 0) {
+                let cacheLocation = latestData.resolvedAddress.split(',');
+                const cacheCountry = cacheLocation[cacheLocation.length -1].trim();
+                checkCountry(cacheCountry); 
+              }
+                
           }
 
       } else {
@@ -213,11 +228,9 @@ function WeatherApp() {
 
     // Store country in localStorage
     localStorage.setItem('storedCountry', JSON.stringify(country));
-
     let cacheKey = `${city}:${country}`;
     const weatherCacheKey = 'weatherCache';
 
-    // Set loading and prompt states
     setLoading(true);
     setPrompt(true);
 
@@ -408,8 +421,6 @@ function WeatherApp() {
     if (data) {
        const iteratedProbs = data.days[0].hours.map(hour => hour.precipprob);
        const averagedProb = (iteratedProbs.reduce((sum, prob) => sum + prob, 0) / 24 );
-       console.log(Math.round(averagedProb));
-
        return Math.round(averagedProb);
     }
   }
@@ -499,8 +510,6 @@ const getPhaseInfo = (phase) => {
   if (phase > 0.75 && phase < 1) { return `Waning crescent`};
 }
 
-useEffect(() => {
-    if (data) {
     const sunPosition = (sunriseTime, sunsetTime) => {
         const sunRise = sunriseTime.split(':');
         const sunSet = sunsetTime.split(':');
@@ -562,15 +571,16 @@ useEffect(() => {
             setPosition({ x, y });
         }
     } 
+
+    useEffect(() => {
+    if (data) {
     sunPosition(data.days[dayIndex].sunrise, data.days[dayIndex].sunset)
     }
-        }, [indexHour, recentSearch]);
-
+    }, [indexHour, recentSearch]);
  
 const showSetting = () => {
     const settingElement = document.querySelector('#w-menu-card');
     console.log(passedCountry);
-
     if (userUnitPreference) {
         checkCountry(userUnitPreference);
         console.log('using user pref');
@@ -643,45 +653,47 @@ const hideRecentSearch = () => {
     }
 }
 
+const getTabWidth = () => {
+    if (tabRef.current) {
+    const width = tabRef.current.clientWidth;
+    console.log('The tab width is:', width);
+    setTabWidth(width - 55);
+    }
+}; 
+
   const defaultPage = (page) => {
       setDayPage(page);
       checkCountry(userUnitPreference);
   }
 
-  if (dayPage) {
-    return (
-        <div className='weather-app place-items-center relative w-full' id='target'>
-           <div className="daily-page"> 
-            <Days 
-                data={data} checkCountry={checkCountry} 
-                 Overview={Overview} indexHour={indexHour}
-                 RecentSearches={RecentSearches} address={address}
-                 recentSearch={recentSearch} showSetting={showSetting}
-                 settingsZ={settingsZ} sunPosition={sunPosition}
-                 setIndexHour={setIndexHour} setRecentSearch={setRecentSearch}
-                 setSettingZ={setSettingZ} setData={setData}
-                 HourlyList={HourlyList} CurrentConditions={CurrentConditions}
-                 defaultTempUnit={defaultTempUnit} 
-                 dayIndex={dayIndex} tempSymbol={tempSymbol}
-                 onPageUpdate={defaultPage}
-                 precipType={precipType} 
-                 getHumidityBGColor={getHumidityBGColor}
-                 getHumidityColor={getHumidityColor}
-                 getHumidityTxtColor={getHumidityTxtColor}
-                 bearingConversion={bearingConversion}
-                 toKiloM={toKiloM}
-                 baroPercent={baroPercent}
-                 UVLevel={UVLevel}
-                 getPhaseType={getPhaseType}
-                 getPhaseInfo={getPhaseInfo}
-                 hourMinFormat={hourMinFormat}
-                 formatFullDay={formatFullDay}
-                 showCurrentHour={showCurrentHour}
-            /></div>
-        </div>
-    )
-}
-   
+useEffect(() => {
+    if (data) {
+        const weathercondition = data.days[dayIndex].hours[indexHour].conditions;
+        const body = document.getElementById("body");
+        console.log(weathercondition);
+        const clear = "Clear";
+        const cloudy = ["Partially cloudy", "Overcast"];
+        const rainy = "Rain, Partially cloudy";
+
+        if (weathercondition.includes(clear)) {
+            console.log('clear skyies');            
+            body.classList.add(`bg-[url('/clear-day-backdrop.jpg')]`);
+            body.classList.remove(`bg-[url('/cloudy-backdrop.jpg')]`);
+            body.classList.remove(`bg-[url('/rain-backdrop.jpg')]`);
+        } else if (weathercondition.includes(cloudy)) {
+            console.log('no clear');
+            body.classList.add(`bg-[url('/cloudy-backdrop.jpg')]`);
+            body.classList.remove(`bg-[url('/clear-day-backdrop.jpg')]`);
+            body.classList.remove(`bg-[url('/rain-backdrop.jpg')]`);
+        } else if (weathercondition.includes(rainy)) {
+            console.log('Raining');
+            body.classList.add(`bg-[url('/rain-backdrop.jpg')]`);
+            body.classList.remove(`bg-[url('/clear-day-backdrop.jpg')]`);
+            body.classList.remove(`bg-[url('/cloudy-backdrop.jpg')]`);
+        }
+    }
+  }, [data, indexHour, dayIndex])
+
   return (
     <motion.div initial="start"
     animate="end"
@@ -689,7 +701,7 @@ const hideRecentSearch = () => {
     style={{ minHeight: '100vh' }}
 
     className='h-auto w-[100%] relative' 
-    id='target'>
+    id='body'>
         
         {loading ? (
             <div className="bg-[#f1f1f1] place-items-center relative grid w-full h-screen">
@@ -711,9 +723,37 @@ const hideRecentSearch = () => {
             <div className="weather-app h-screen bg-slate-50" id="target">
                 <LocationForm fetchData={fetchData} convertCoordinates={convertCoordinates} />
             </div>
+        ) : dayPage ? (
+            <Days 
+            data={data} checkCountry={checkCountry} 
+             Overview={Overview} indexHour={indexHour}
+             RecentSearches={RecentSearches} address={address}
+             recentSearch={recentSearch} showSetting={showSetting}
+             settingsZ={settingsZ} sunPosition={sunPosition} 
+             position={position} getTabWidth={getTabWidth} 
+             tabWidth={tabWidth}
+             setIndexHour={setIndexHour} setRecentSearch={setRecentSearch}
+             setSettingZ={setSettingZ} setData={setData}
+             HourlyList={HourlyList} CurrentConditions={CurrentConditions}
+             defaultTempUnit={defaultTempUnit} 
+             dayIndex={dayIndex} tempSymbol={tempSymbol}
+             onPageUpdate={defaultPage}
+             precipType={precipType} 
+             getHumidityBGColor={getHumidityBGColor}
+             getHumidityColor={getHumidityColor}
+             getHumidityTxtColor={getHumidityTxtColor}
+             bearingConversion={bearingConversion}
+             toKiloM={toKiloM}
+             baroPercent={baroPercent}
+             UVLevel={UVLevel}
+             getPhaseType={getPhaseType}
+             getPhaseInfo={getPhaseInfo}
+             hourMinFormat={hourMinFormat}
+             formatFullDay={formatFullDay}
+             showCurrentHour={showCurrentHour}/>
         ) : data && (
         <>
-            <div id="weather-app" className='weather-app-grid grid md: justify-items-center col-auto gap-5 md:gap-0 relative bg-[rgba(249,249,251,.3)] md:h-full z-20 overflow-clip' 
+            <div id="weather-app" className={`weather-app-grid grid md: justify-items-center col-auto gap-5 md:gap-0 relative bg-[url('/cloudy-backdrop.jpg')] md:h-full z-20 overflow-clip`} 
                 onLoad={defaultTempUnit}
                 onClick={hideSettings}
              >
@@ -774,10 +814,10 @@ const hideRecentSearch = () => {
                     <div className="desc text-[17px] h-fit font-medium text-[#404C4F] py-2"> Daily Forecast  
                     </div>
 
-                    <ul className=" max-h-auto overflow-y-scroll">
-                        {data.days.slice(0, 10).map((day, index) => (
+                    <ul className=" max-h-auto">
+                        {data?.days?.slice(0, 10).map((day, index) => (
                             <motion.li key={index} 
-                                className="grid grid-flow-col bg-[#F9F9FB] px-3 py-3 rounded-md active:scale-95" 
+                                className="flex flex-row justify-between bg-[#F9F9FB] px-3 py-3 rounded-md active:scale-95" 
                                 style={{
                                     marginBlockEnd: '.5em',
                                 }}
@@ -786,9 +826,10 @@ const hideRecentSearch = () => {
                                     updateDayIndex(index);
                                 }}>
 
-                                <p className='day-element inline-block text-[#404C4F] font-normal tracking-wide text-base p-1 w-fit h-fit' ref={(el) => (dayRef.current[index]) = el }>{formatFullDay(data.days[index].datetime)}</p>
-                                <span className="dayInfo justify-self-end ">
-                                <p className='inline-block text-teal-900 font-base tracking-wide text-base px-2'>{defaultTempUnit(day.temp)}{tempSymbol(symb)}</p>
+                                <p className='day-element inline-block text-[#404C4F] font-normal tracking-wide text-base p-1 w-fit h-fit ' ref={(el) => (dayRef.current[index]) = el }>{formatFullDay(data.days[index].datetime)}</p>
+
+                                <span className="dayInfo flex">
+                                <p className='inline-block text-teal-900 font-base tracking-wide text-base px-2 align-baseline'>{defaultTempUnit(day.temp)}{tempSymbol(symb)}</p>
                                 <p className='inline-block text-[#505058] font-sans font-normal tracking-wide text-base px-2'>{index === 0 ? estimatedPrecipChance(day.precipprob) : Math.round(day.precipprob)}%</p>
                                 <p className="inline-block"> <img src={`${iconBasePath}${day.icon}.png`} alt="" className="src size-5" /> </p>
                                 </span>
@@ -800,12 +841,15 @@ const hideRecentSearch = () => {
                 <div className="recents">
                     <RecentSearches 
                      data={data} setData={setData} 
-                     indexHour={indexHour} address={address} ref={recentsRef}
+                     indexHour={indexHour} address={address} 
+                     ref={{ tabRef, recentsRef }}
                      recentSearch={recentSearch} showSetting={showSetting}
                      hideRecentSearch={hideRecentSearch}
                      showRecentSearch={showRecentSearch}
-                     setIndexHour={setIndexHour}
+                     setIndexHour={setIndexHour} checkCountry={checkCountry}
                      dayIndex={dayIndex} settingsZ={settingsZ}
+                     tabWidth={tabWidth} setTabWidth={setTabWidth}
+                     getTabWidth={getTabWidth}
                      setSettingZ={setSettingZ} 
                      defaultTempUnit={defaultTempUnit} 
                      tempSymbol={tempSymbol}
@@ -846,12 +890,12 @@ const hideRecentSearch = () => {
                     <label className="custom-checkbox" htmlFor="">
                         <p 
                             className="units check-button1"
-                            onClick={checkActionCels}
+                            onClick={() => checkActionCels()}
                             >
                             <input type="radio" className='custom-checkbox1 pe-4 me-1 text-base font-medium text-[#333333]' name="celsius" value={'metric'}  /><span></span>Celsius</p>
                         <p 
                             className="units check-button2"
-                            onClick={checkActionFahr}
+                            onClick={() => checkActionFahr()}
                             >
                             <input type="radio" className='custom-checkbox2 pe-4 me-1 text-base font-medium text-[#333333]' name="fahrenhait" value={'us'} /> Fahrenhait</p>
                     </label>

@@ -56,6 +56,7 @@ const HourlyList = forwardRef(
         <div className="desc text-[17px] font-medium md:h-fit flex justify-between text-[#404C4F]">
           Hourly Forecast
           <img
+            loading="lazy"
             src="./history.ico"
             alt=""
             className="search-history size-5 md:hidden"
@@ -89,6 +90,7 @@ const HourlyList = forwardRef(
               </p>
               <p className="py-1 text-[#505058]">
                 <img
+                  loading="lazy"
                   src={`${iconBasePath}${hour.icon}.png`}
                   alt=""
                   className="src size-6 place-self-center"

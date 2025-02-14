@@ -91,7 +91,7 @@ const CurrentConditions = React.memo(({
                     <div 
                     className="arrow justify-self-center text-4xl"
                     >
-                        <img src="/compass.png" alt="" srcSet="" className='w-6 h-6 transition-all'
+                        <img loading="lazy" src="/compass.png" alt="" srcSet="" className='w-6 h-6 transition-all'
                         style={{
                             transform: `rotate(${data.days[dayIndex].hours[indexHour].winddir}deg)`,
                             }}/>
@@ -112,11 +112,11 @@ const CurrentConditions = React.memo(({
         <div className="card-column flex-1/2 basis-[44vw] ps-1 pe-2 max-w-1/2 md:flex-1/3 md:max-w-[32%]">
             <div className="visible cards shadow-sm mt-4 p-2 relative w-full md:h-[192px] align-middle bg-[rgba(229,229,229,0.5)] min-h-[275px] md:min-h-[225px] rounded-lg">
                     <div className="desc text-base/4 font-normal text-[#404C4F]">Visibility</div>
-                    <img src="/horizon.png" alt="" className="m-4" />
-                    <p className=' text-neutral-700 font-normal font-sans'> <img src="/visibility.png" alt="" className='me-1 inline-block'/>
+                    <img loading="lazy" src="/horizon.png" alt="" className="m-4" />
+                    <p className=' text-neutral-700 font-normal font-sans'> <img loading="lazy" src="/visibility.png" alt="" className='me-1 inline-block'/>
                         {toKiloM(data.days[dayIndex].hours[indexHour].visibility)} km
                     </p>
-                    <p className='py-1  text-neutral-700 font-normal font-sans'> <img src="/cloud-cover.png" alt="" className="me-1 inline-block" />
+                    <p className='py-1  text-neutral-700 font-normal font-sans'> <img loading="lazy" src="/cloud-cover.png" alt="" className="me-1 inline-block" />
                         <span className="cloud inline-block"> {data.days[dayIndex].hours[indexHour].cloudcover} %</span> Cloud cover
                     </p>                                                
             </div>
@@ -144,7 +144,7 @@ const CurrentConditions = React.memo(({
                     <div className="ms-10 relative bottom-3 text-sm text-zinc-400">0</div>
                     </div>
 
-                    <p className='py-1 text-[#505058] '> <img src="/sunrays.png" alt="" className="ray inline-block text-[#505058]" /> {data.days[dayIndex].hours[indexHour].solarradiation} W/m² </p>
+                    <p className='py-1 text-[#505058] '> <img loading="lazy" src="/sunrays.png" alt="" className="ray inline-block text-[#505058]" /> {data.days[dayIndex].hours[indexHour].solarradiation} W/m² </p>
                 </div>
         </div>
     </div>
@@ -167,7 +167,7 @@ const CurrentConditions = React.memo(({
 
         <div className="horizon-graph place-self-center relative">
             <span className="celestial-body">
-                <img src={`/GWeatherIcons/clear-day.png`} alt="" className={`size-5 absolute  p-0 m-0 transition-all z-50`} 
+                <img loading="lazy" src={`/GWeatherIcons/clear-day.png`} alt="" className={`size-5 absolute  p-0 m-0 transition-all z-50`} 
                 style={{ left: `${position.x}px`, top: `${position.y}px` }}/>
             </span>
             <div className="graph flex flex-row relative">
@@ -189,7 +189,7 @@ const CurrentConditions = React.memo(({
 
         <div className="moon mx-5">
             <div className=" font-normal text-[15px] text-[#505058]"> Moon </div>
-            <img src={`/moon-phases/${getPhaseType(data.days[dayIndex].moonphase)}.png`} alt="" srcSet="" />
+            <img loading="lazy" src={`/moon-phases/${getPhaseType(data.days[dayIndex].moonphase)}.png`} alt="" srcSet="" />
             <h1 className="moon-info font-medium text-amber-800"> {getPhaseInfo(data.days[dayIndex].moonphase)} </h1>
 
         </div>

@@ -12,18 +12,22 @@ const Days = ({
     data,  Overview, RecentSearches, setData,
     HourlyList, dayIndex, indexHour, setIndexHour, 
     address, recentSearch, showSetting, settingsZ,
+    getTabWidth,
     setRecentSearch, setSettingZ, CurrentConditions,
     onPageUpdate, defaultTempUnit, tempSymbol, 
-    hourMinFormat, precipType, 
+    hourMinFormat, precipType, position,
     bearingConversion, getHumidityColor, 
     toKiloM, getHumidityBGColor, getHumidityTxtColor, 
     baroPercent, UVLevel, bttmAlign, 
-    getPhaseType, getPhaseInfo  
+    getPhaseType, getPhaseInfo , tabWidth
 
 } ) => {
+    const listContainer = useRef(null);
+    const hourTimeRef = useRef(null);
     const pageRef = useRef([]);
     const hourInfoRef = useRef([]);
-
+    const recentsRef = useRef(null);
+    const tabRef = useRef(null);
     const iconBasePath = '/GWeatherIcons/';
 
     useEffect(() => {
@@ -85,14 +89,16 @@ const Days = ({
         const day = new Date(numDay);
         const realDate = new Intl.DateTimeFormat('en-US', dates).format(day);
         return realDate;
-    };
+    };    
 
     return (
+        <div className='weather-app place-items-center relative w-full' id='target'>
+
         <div className='weather-days-app bg-[rgba(249,249,251,.3)]'>
             <div className="back-to absolute pt-4 h-fit ms-4" 
             onClick={() => {defaultPage()}}
             ref={pageRef}> 
-                <img src='/icons8-back-24.png' alt="" srcSet="" /> 
+                <img loading="lazy" src='/icons8-back-24.png' alt="" srcSet="" /> 
             </div>
 
             <div className="day-elements top-0 pt-4 justify-self-center md:max-w-3/5 grid grid-cols-1 row-auto justify-items-center h-full gap-5">
@@ -106,8 +112,8 @@ const Days = ({
                 <HourlyList 
                   data={data} dayIndex={dayIndex} indexHour={indexHour}
                   setIndexHour={setIndexHour} setRecentSearch={setRecentSearch} 
-                  setSettingZ={setSettingZ}
-                  defaultTempUnit={defaultTempUnit} hourTimeRef={hourInfoRef}
+                  setSettingZ={setSettingZ} ref={{ listContainer, hourTimeRef }}
+                  defaultTempUnit={defaultTempUnit} 
                   hourInfoRef={hourInfoRef}
                   tempSymbol={tempSymbol}  
                   hourMinFormat={hourMinFormat}/>
@@ -116,7 +122,7 @@ const Days = ({
                   data={data} dayIndex={dayIndex} indexHour={indexHour}
                   formatFullDay={formatFullDay} defaultTempUnit={defaultTempUnit}
                   showCurrentHour={showCurrentHour} hourMinFormat={hourMinFormat} 
-                  precipType={precipType} 
+                  precipType={precipType} position={position}
                   getHumidityBGColor={getHumidityBGColor}
                   getHumidityColor={getHumidityColor}
                   getHumidityTxtColor={getHumidityTxtColor}
@@ -128,11 +134,13 @@ const Days = ({
                   getPhaseType={getPhaseType}
                   getPhaseInfo={getPhaseInfo}/>
 
-                <div className="recents">
+                <div className="recents ">
                     <RecentSearches 
                     data={data} setData={setData} 
                     indexHour={indexHour} address={address}
                     recentSearch={recentSearch} showSetting={showSetting}
+                    ref={{ tabRef, recentsRef }} getTabWidth={getTabWidth}
+                    tabWidth={tabWidth}
                     setRecentSearch={setRecentSearch}
                     setIndexHour={setIndexHour}
                     dayIndex={dayIndex} settingsZ={settingsZ}
@@ -143,6 +151,7 @@ const Days = ({
                 </div>
 
             </div>
+        </div>
         </div>
     );
     

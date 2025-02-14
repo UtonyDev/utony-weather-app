@@ -12,7 +12,8 @@
      " hourly "
      " current "
      " current "
-     " current ";
+     " current "
+     " recents ";
  }
  
  .back-to { grid-area: back-to;}
@@ -21,4 +22,5 @@
  .hourly { grid-area: hourly; }
  .current { grid-area: current; }
  .day-date { grid-area: day-date;}
+ .recents { grid-area: recents;}
  }
