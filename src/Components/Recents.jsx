@@ -94,24 +94,37 @@ const RecentSearches = forwardRef(
       }
     }
 
-    const removeLocation = (pickedLocation) => {
-      setFallBackKey(currentKey);
-
+    useEffect(() => {
       if (fallBackKey) {
-        console.log(cachedData[pickedLocation]);
-        const itemToBeRemoved = pickedLocation;
-        cachedData[itemToBeRemoved] = {};
-        delete cachedData[itemToBeRemoved];
-        localStorage.setItem("weatherCache", JSON.stringify(cachedData));
         console.log("fallback key is", fallBackKey);
         const fallbackCountry = fallBackKey.split(':').at(-1);
-        const newData = cachedData[fallBackKey]
+        const newData = cachedData[fallBackKey];
+        
         setData(newData);
         checkCountry(fallbackCountry[fallbackCountry.length - 1]);
-        console.log('Deleted and set new country');}
+        console.log('Deleted and set new country');
+      }
+    }, [fallBackKey]);    
+
+    const removeLocation = (pickedLocation) => {
+      setFallBackKey(currentKey);
+      
+      console.log(cachedData[pickedLocation]);
+      const itemToBeRemoved = pickedLocation;      
+      cachedData[itemToBeRemoved] = {};
+      delete cachedData[itemToBeRemoved];
+      localStorage.setItem("weatherCache", JSON.stringify(cachedData));
+
+      console.log("key to be deleted", itemToBeRemoved);
+      console.log("the prefered saved location is", preferedKey);
+
+      if (preferedKey === itemToBeRemoved) {
+        console.log('the saved location is being deleted');
+        localStorage.removeItem("savedKey");
+      }
     }
   
-  useEffect(() => {
+    useEffect(() => {
       getTabWidth();
       window.addEventListener('resize', getTabWidth);
       window.addEventListener('load', getTabWidth);
@@ -158,10 +171,14 @@ const RecentSearches = forwardRef(
                 ref={tabRef}
                 className={`location-tab bg-[#F9F9FB] p-2 rounded-lg border-1 border-gray-200 my-2 z-20`}
                 style={{
-                    backgroundColor: currentKey === key ? '#d7f3ed' : '#F9F9FB', 
+                    backgroundColor: currentKey === key ? '#ECF8F7' : '#F9F9FB', 
                 }}>
-                <h3 className="title mb-3 text-neutral-700 font-normal">
-                  {location}
+                <h3 
+                 className="title mb-3 font-normal"
+                 style={{
+                  color: currentKey === key ? '#1B5A4D' : '#404040',
+                 }}>
+                  {location.replace(/:/g, ", ")}
                 </h3>
                 <div className="location-Info w-full">
                   <span className="left-info flex flex-row">

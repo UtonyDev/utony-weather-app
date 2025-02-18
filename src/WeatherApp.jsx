@@ -679,15 +679,15 @@ useEffect(() => {
             console.log('clear skyies');            
             body.classList.add(`bg-[url('/clear-day-backdrop.jpg')]`);
             body.classList.remove(`bg-[url('/cloudy-backdrop.jpg')]`);
-            body.classList.remove(`bg-[url('/rain-backdrop.jpg')]`);
-        } else if (weathercondition.includes(cloudy)) {
+            body.classList.remove(`bg-[url('/rain-backdrop.jpeg')]`);
+        } else if (weathercondition === 'Overcast') {
             console.log('no clear');
             body.classList.add(`bg-[url('/cloudy-backdrop.jpg')]`);
             body.classList.remove(`bg-[url('/clear-day-backdrop.jpg')]`);
-            body.classList.remove(`bg-[url('/rain-backdrop.jpg')]`);
+            body.classList.remove(`bg-[url('/rain-backdrop.jpeg')]`);
         } else if (weathercondition.includes(rainy)) {
             console.log('Raining');
-            body.classList.add(`bg-[url('/rain-backdrop.jpg')]`);
+            body.classList.add(`bg-[url('/rain-backdrop.jpeg')]`);
             body.classList.remove(`bg-[url('/clear-day-backdrop.jpg')]`);
             body.classList.remove(`bg-[url('/cloudy-backdrop.jpg')]`);
         }
@@ -700,7 +700,7 @@ useEffect(() => {
     transition={{ duration: 5, yoyo: Infinity }} // Infinite gradient animation
     style={{ minHeight: '100vh' }}
 
-    className='h-auto w-[100%] relative' 
+    className='h-auto w-[100%] relative bg-contain md:bg-cover' 
     id='body'>
         
         {loading ? (
@@ -753,7 +753,7 @@ useEffect(() => {
              showCurrentHour={showCurrentHour}/>
         ) : data && (
         <>
-            <div id="weather-app" className={`weather-app-grid grid md: justify-items-center col-auto gap-5 md:gap-0 relative bg-[url('/cloudy-backdrop.jpg')] md:h-full z-20 overflow-clip`} 
+            <div id="weather-app" className={`weather-app-grid grid md: justify-items-center col-auto gap-5 md:gap-0 relative md:h-full z-20 overflow-clip`} 
                 onLoad={defaultTempUnit}
                 onClick={hideSettings}
              >
