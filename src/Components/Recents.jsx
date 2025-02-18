@@ -3,6 +3,8 @@ import "../App.css";
 import "../index.css";
 import React, { forwardRef, useEffect, useState, useRef } from "react";
 import { px } from "framer-motion";
+import { log } from "mathjs";
+import { at } from "lodash";
 
 const RecentSearches = forwardRef(
   (
@@ -24,39 +26,35 @@ const RecentSearches = forwardRef(
     const [locationsData, setLocationsData] = useState([]);
     const [currentKey, setCurrentKey] = useState(0);
     const [preferedKey, setPreferedKey] = useState('');
-    const [locationKey, setLocationKey] = useState(0);
     const [fallBackKey, setFallBackKey] = useState('');
-    const [backupKey, setBackupKey] = useState('');
     const weatherCacheKey = "weatherCache";
     const { tabRef, recentsRef } = ref;
 
-    let userPreferedCountry = localStorage.getItem("savedKey") || {};
-    let userPreferedKey = String(userPreferedCountry)
-    .replace(/"/g, "");
-      
+    let userPreferedCountry = localStorage.getItem("savedKey") || [];
+    let userPreferedKey = String(userPreferedCountry).replace(/"/g, "").trim(); 
     console.log(userPreferedKey);
-    let cachedData = JSON.parse(localStorage.getItem(weatherCacheKey)) || {};
-    let fallbackCountry = fallBackKey.split(":")
 
+    let cachedData = JSON.parse(localStorage.getItem(weatherCacheKey)) || {};
+
+    useEffect(() => {
+      if (Object.keys(cachedData).length > 0) {
+        setFallBackKey(currentKey);
+        
+        if (currentKey === 0 && userPreferedKey.length === 0) {
+          console.log("highlighting just the last item");
+          setCurrentKey(Object.keys(cachedData).at(-1));
+        } else if (userPreferedKey || userPreferedKey === preferedKey) {
+          console.log('using the user favourite location.')
+          setCurrentKey(userPreferedKey);
+        } 
+      }
+    }, []);
 
     useEffect(() => {
       if (!defaultTempUnit) return; // Ensure function exists before running
       setPreferedKey(userPreferedKey);
-
       // Highlights the current location.
       if (Object.keys(cachedData).length > 0) {
-        setFallBackKey(Object.keys(cachedData).at(-1));
-        console.log(fallBackKey);
-        if (locationKey === 0 && preferedKey === 0) {
-          console.log('the default location is in use ')
-            setLocationKey(Object.keys(cachedData).at(-1));
-      } else if (preferedKey) {
-          console.log('using the formally set location by user');
-          setLocationKey(backupKey);
-        } else {
-          console.log('the user selected location is in use ');
-          setLocationKey(currentKey);
-        } 
         const locationsArray = Object.keys(cachedData)
           .map((key) => {
             let latestData = cachedData[key];
@@ -84,12 +82,12 @@ const RecentSearches = forwardRef(
 
     const saveLocation = (savedKey) => {
       if (currentKey === 0) {
-        const initialLocation = savedKey;
+        const initialLocation = savedKey.trimEnd();
         setPreferedKey(initialLocation);
         console.log("the initial key is:", initialLocation);
         localStorage.setItem("savedKey", JSON.stringify(initialLocation));  
       } else {
-        const savedLocation = savedKey;
+        const savedLocation = savedKey.trimEnd();
         setPreferedKey(savedLocation);
         console.log("the current key is:", savedLocation);
         localStorage.setItem("savedKey", JSON.stringify(savedLocation));  
@@ -97,26 +95,21 @@ const RecentSearches = forwardRef(
     }
 
     const removeLocation = (pickedLocation) => {
-      console.log(cachedData[pickedLocation]);
-      const itemToBeRemoved = pickedLocation;
-      cachedData[itemToBeRemoved] = {};
-      delete cachedData[itemToBeRemoved];
-      localStorage.setItem("weatherCache", JSON.stringify(cachedData));
+      setFallBackKey(currentKey);
 
-      console.log("fallback key is", fallBackKey);
-      
-      const newData = cachedData[fallBackKey];
-      if (newData) {
+      if (fallBackKey) {
+        console.log(cachedData[pickedLocation]);
+        const itemToBeRemoved = pickedLocation;
+        cachedData[itemToBeRemoved] = {};
+        delete cachedData[itemToBeRemoved];
+        localStorage.setItem("weatherCache", JSON.stringify(cachedData));
+        console.log("fallback key is", fallBackKey);
+        const fallbackCountry = fallBackKey.split(':').at(-1);
+        const newData = cachedData[fallBackKey]
         setData(newData);
         checkCountry(fallbackCountry[fallbackCountry.length - 1]);
-      }
+        console.log('Deleted and set new country');}
     }
-
-    useEffect(() => {
-      if (userPreferedKey) {
-        setBackupKey(userPreferedKey.trim());
-      }
-    }, [])
   
   useEffect(() => {
       getTabWidth();
@@ -160,15 +153,12 @@ const RecentSearches = forwardRef(
                   const currentCountry = key.split(':');
                   checkCountry(currentCountry[currentCountry.length - 1]);
                   console.log(currentKey);
-                  setLocationKey(key);
-                  setBackupKey(key)
-                  console.log('the location key is', locationKey);
                   hideRecentSearch();
                 }}
                 ref={tabRef}
                 className={`location-tab bg-[#F9F9FB] p-2 rounded-lg border-1 border-gray-200 my-2 z-20`}
                 style={{
-                    backgroundColor: locationKey === key ? '#d7f3ed' : '#F9F9FB', 
+                    backgroundColor: currentKey === key ? '#d7f3ed' : '#F9F9FB', 
                 }}>
                 <h3 className="title mb-3 text-neutral-700 font-normal">
                   {location}
@@ -207,10 +197,10 @@ const RecentSearches = forwardRef(
                    <img loading="lazy" src={`trash.png`} alt="" className="size" /> </span>
                 <span className="save ms-1 size-4"
                 onClick={() => {
-                  console.log("the location key is", location)
+                  console.log("the location is", location)
                   saveLocation(location);
                   console.log(preferedKey);
-                  }}> <img loading="lazy" src={preferedKey === location ? `fav-filled.png` : `fav-blank.png` } alt="" srcSet="" /> </span>
+                  }}> <img loading="lazy" src={preferedKey === location.trimEnd()  ? `fav-filled.png` : `fav-blank.png` } alt="" srcSet="" /> </span>
                 </span>
              </div>
              </div>

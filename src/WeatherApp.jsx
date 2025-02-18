@@ -123,45 +123,46 @@ function WeatherApp() {
       const weatherCacheKey = 'weatherCache';
       const cachedData = JSON.parse(localStorage.getItem(weatherCacheKey)) || {};
       const savedCacheKey = 'savedKey';
-      let userPreferedCountry = JSON.parse(localStorage.getItem(savedCacheKey));
-      let userPreferedKey = String(userPreferedCountry)
-      .replace(/"/g, "").replace(/,([^,]*)$/, ",$1").trim();
-
+      let userPreferedCountry = JSON.parse(localStorage.getItem(savedCacheKey)) || [];
+      let userPreferedKey = String(userPreferedCountry).replace(/"/g, "").replace(/,([^,]*)$/, ",$1");
       console.log("the user prefers:", userPreferedKey);
+      console.log("the user prefers the country:", userPreferedKey);
   
       console.log('Cached data:', cachedData);
   
       // Check if there is any data in the cache
       if (Object.keys(cachedData).length > 0) {
         const latestKey = Object.keys(cachedData).at(-1);
-        console.log(latestKey);
         let latestData = cachedData[latestKey];
+        console.log(latestData);
        
-        if (userPreferedKey.length > 0 && userPreferedKey != null ) {
+        if (userPreferedKey.length > 0) {
             let userPreferedData = cachedData[userPreferedKey]
             console.log("the user prefers the data:", userPreferedData);
+            console.log(cachedData["London:United Kingdom"]);
             setData(userPreferedData);
         } else {
             setData(latestData); 
             console.log('Using cached data from weatherCache:', latestData);
           console.log(latestData.resolvedAddress);
+          
         }
-        
-          if (userUnitPreference) {
-              checkCountry(userUnitPreference);
-              console.log('the user prefers: ', userUnitPreference);
-          } else {
-              console.log('user hasnt set preference');
-              if (latestData.length > 0) {
-                let cacheLocation = latestData.resolvedAddress.split(',');
-                const cacheCountry = cacheLocation[cacheLocation.length -1].trim();
-                checkCountry(cacheCountry); 
-              }
-                
-          }
 
+        if (userUnitPreference) {
+            checkCountry(userUnitPreference);
+            console.log('the user prefers: ', userUnitPreference);
+        } else {
+            console.log('user hasnt set preference');
+            if (latestData) {
+              let cacheLocation = latestData.resolvedAddress.split(',');
+              const cacheCountry = cacheLocation[cacheLocation.length -1].trim();
+              console.log("the cached country is", cacheCountry);
+              checkCountry(cacheCountry); 
+            } 
+        }
+  
       } else {
-          // No cached data, show the location prompt
+          // No cached data, show the location prompt.
           setPrompt(true);
       }
   }, []);
@@ -656,7 +657,6 @@ const hideRecentSearch = () => {
 const getTabWidth = () => {
     if (tabRef.current) {
     const width = tabRef.current.clientWidth;
-    console.log('The tab width is:', width);
     setTabWidth(width - 55);
     }
 }; 
