@@ -4,10 +4,9 @@ import './weather.css';
 import '../index.css';
 import '../App.css';
 
-const LocationForm = React.memo(({ fetchData, convertCoordinates }) => {
+const LocationForm = React.memo(({ address, setAddress, convertCoordinates }) => {
     const [city, setCity] = useState('');
     const [country, setCountry] = useState('');
-    const [loading, setLoading] = useState(false);
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -17,9 +16,10 @@ const LocationForm = React.memo(({ fetchData, convertCoordinates }) => {
             alert("Please enter both city and country");
             return;
         }
-
-        fetchData(city, country);
-        setLoading(true);
+        const cacheAddress = `${city},${country}`;
+        console.log("the address from the form is",cacheAddress);
+        setAddress(cacheAddress);
+        localStorage.setItem('address', cacheAddress);
     }
 
     const getUserCoordinates = () => {
@@ -39,21 +39,10 @@ const LocationForm = React.memo(({ fetchData, convertCoordinates }) => {
           } else {
             console.error("Geolocation is not supported by this browser.");
           }
-          setLoading(true);
+    }
 
-        }
-
-        if (loading) {
-            return (
-                <div className="bg-slate-50 place-items-center relative grid w-full h-full">
-                    <span className="absolute top-1/3  spinner"></span>
-                    <div className="plead-message"> Please hold on this may take a while...</div>
-                </div>
-            )
-        }
-
-    return (
-        <div className=' place-content-center relative top-[20%] grid'>
+        return (
+        <div className='relative grid place-items-center h-screen align-center'>
 
 <div className="form-container grid sm:w-[90vw] sm:h-[60vh] md:max-w-[45vw] md:h-fit bg-white shadow-lg rounded-xl py-2 gap-2">
     <img loading="lazy" src="/icons8-place-marker-48.png" alt="location icon" className='block place-self-center'/>

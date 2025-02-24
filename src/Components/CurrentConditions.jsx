@@ -82,7 +82,7 @@ const CurrentConditions = React.memo(({
         </div>
 
         <div className="card-column flex-1/2 basis-[44vw] ps-1 pe-2 max-w-1/2 md:flex-1/3 md:max-w-[32%]">
-            <div className="wind cards shadow-sm mt-4 p-2 align-middle bg-[rgba(229,229,229,.5)] relative w-full min-h-[275px] md:min-h-[200px] rounded-lg ">
+            <div className="wind cards shadow-sm mt-4 p-2 align-middle bg-[rgba(229,229,229,.5)] relative w-full min-h-[275px] md:min-h-[225px] rounded-lg ">
                 <div className="desc text-base/4 font-normal text-[#404C4F] bold">Wind</div>
 
                 <div className="compass grid">

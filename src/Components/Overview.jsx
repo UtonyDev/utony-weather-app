@@ -4,7 +4,7 @@ import '../index.css';
 import '../App.css';
 
 function Overview({ 
-    data,  indexHour, defaultTempUnit, dayIndex ,
+    data, indexHour, defaultTempUnit, dayIndex ,
     tempSymbol
      }) {
 

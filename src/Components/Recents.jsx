@@ -10,7 +10,6 @@ const RecentSearches = forwardRef(
   (
     {
       data,
-      setData,
       defaultTempUnit,
       tempSymbol,
       dayIndex,
@@ -20,11 +19,16 @@ const RecentSearches = forwardRef(
       checkCountry,
       tabWidth,
       getTabWidth,
+      address,
+      setAddress,
+      displayAddress,
+      setDisplayAddress,
+      currentKey, 
+      setCurrentKey,
     },
     ref // Forwarded ref from parent
   ) => {
     const [locationsData, setLocationsData] = useState([]);
-    const [currentKey, setCurrentKey] = useState(0);
     const [preferedKey, setPreferedKey] = useState('');
     const [fallBackKey, setFallBackKey] = useState('');
     const weatherCacheKey = "weatherCache";
@@ -34,15 +38,16 @@ const RecentSearches = forwardRef(
     let userPreferedKey = String(userPreferedCountry).replace(/"/g, "").trim(); 
     console.log(userPreferedKey);
 
-    let cachedData = JSON.parse(localStorage.getItem(weatherCacheKey)) || {};
+    let cachedData = JSON.parse(localStorage.getItem("weatherCache")) || {};
 
     useEffect(() => {
       if (Object.keys(cachedData).length > 0) {
         setFallBackKey(currentKey);
+        console.log("CURRENT KEY",address.replace(/,\s*([^,]*)$/, ':$1'))
         
         if (currentKey === 0 && userPreferedKey.length === 0) {
-          console.log("highlighting just the last item");
-          setCurrentKey(Object.keys(cachedData).at(-1));
+          console.log("highlighting current item");
+          setCurrentKey(address.replace(/,\s*([^,]*)$/, ':$1'));
         } else if (userPreferedKey || userPreferedKey === preferedKey) {
           console.log('using the user favourite location.')
           setCurrentKey(userPreferedKey);
@@ -53,11 +58,12 @@ const RecentSearches = forwardRef(
     useEffect(() => {
       if (!defaultTempUnit) return; // Ensure function exists before running
       setPreferedKey(userPreferedKey);
+
       // Highlights the current location.
       if (Object.keys(cachedData).length > 0) {
         const locationsArray = Object.keys(cachedData)
           .map((key) => {
-            let latestData = cachedData[key];
+            let latestData = cachedData[key].storedData;
 
             if (
               !latestData ||
@@ -98,23 +104,23 @@ const RecentSearches = forwardRef(
       if (fallBackKey) {
         console.log("fallback key is", fallBackKey);
         const fallbackCountry = fallBackKey.split(':').at(-1);
-        const newData = cachedData[fallBackKey];
+        const newData = cachedData[fallBackKey.replace(':', ',')];
         
-        setData(newData);
         checkCountry(fallbackCountry[fallbackCountry.length - 1]);
         console.log('Deleted and set new country');
       }
-    }, [fallBackKey]);    
+    }, [fallBackKey]); 
 
     const removeLocation = (pickedLocation) => {
       setFallBackKey(currentKey);
+      console.log(currentKey);
+      console.log('the fallback key used ', fallBackKey);
       
       console.log(cachedData[pickedLocation]);
       const itemToBeRemoved = pickedLocation;      
       cachedData[itemToBeRemoved] = {};
       delete cachedData[itemToBeRemoved];
       localStorage.setItem("weatherCache", JSON.stringify(cachedData));
-
       console.log("key to be deleted", itemToBeRemoved);
       console.log("the prefered saved location is", preferedKey);
 
@@ -123,6 +129,9 @@ const RecentSearches = forwardRef(
         localStorage.removeItem("savedKey");
       }
     }
+
+    console.log('our currentKey now is? ', currentKey);
+    console.log('our FallbackKey now is? ', fallBackKey);
   
     useEffect(() => {
       getTabWidth();
@@ -158,11 +167,12 @@ const RecentSearches = forwardRef(
               <div key={key}>
               <div
                 key={key}
-                onClick={() => {
+                onClick={ async () => {
                   console.log("the main key is", key);
                   const selectedLocationData = cachedData[key];
                   setCurrentKey(key);
-                  setData(selectedLocationData);
+                  await setAddress(key.replace(':', ','));
+                  await setDisplayAddress(key.replace(':', ','));
                   const currentCountry = key.split(':');
                   checkCountry(currentCountry[currentCountry.length - 1]);
                   console.log(currentKey);
