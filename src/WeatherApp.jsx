@@ -54,6 +54,7 @@ function WeatherApp() {
   let userPreferedKey = String(userPreferedLocation).replace(/"/g, "").trim(); 
   console.log(userPreferedLocation.length > 0);
   console.log(userPreferedKey);
+  console.log('the prev address was ', prevAddress.current);
 
   const iconBasePath = '/GWeatherIcons/';
   console.log("the start up address is", address);
@@ -89,12 +90,12 @@ const fetchData = async (city, country) => {
         }
         const jsonData = await response.json();
 
-        await setPrompt(false);
+        setPrompt(false);
 
-        await saveToLocalStorage(city, country, jsonData)
+        saveToLocalStorage(city, country, jsonData)
         return jsonData;
     }
-
+    console.log('the cache exist ? ', Object.keys(cachedJsonData).length > 0);
     if (Object.keys(cachedJsonData).length > 0 && prevAddress.current ) {
         console.log("Using cached json data", cachedJsonData[cacheKey].storedData);
         const timeStamp = cachedJsonData[cacheKey].timestamp;
@@ -105,33 +106,37 @@ const fetchData = async (city, country) => {
         const hourState = timeStamp + staleTime
         console.log('the hour state is', hourState)
         console.log('the current hour is', currentMSHour);
+
         if (hourState < currentMSHour) {
             console.log('staletime exceeded, time to refresh');
             if (userPreferedLocation.length > 0) {
                 console.log('re-fetching the user favorite location');
-                await setPrompt(false);
+                setPrompt(false);
                 const splitPreferedKey = userPreferedKey.split(':');
                 return fetchNewData(splitPreferedKey[0].trim(), splitPreferedKey.at(-1).trim());
             } else {
                 console.log('re-fetching the default location')
-                await setPrompt(false);
+                setPrompt(false);
                 return fetchNewData(city, country);
             }
         } else {
             if (userPreferedLocation.length > 0) {
                 console.log('using the user favorite location');
-                await setPrompt(false);
+                setPrompt(false);
                 console.log('the preferred key selected is ', userPreferedKey);
                 return cachedJsonData[userPreferedKey].storedData;        
             } else {
                 console.log('nah... continuing using the cache');
-                await setPrompt(false);
+                setPrompt(false);
                 return cachedJsonData[cacheKey].storedData;
             }
         }
     } else {
         // fetch fresh data
-        return fetchNewData();
+        setPrompt(false);
+        console.log(cacheKey);
+        setCurrentKey(cacheKey);
+        return fetchNewData(city, country);
     }
 };
 
@@ -149,7 +154,9 @@ const convertCoordinates = async (latitude, longitude) => {
         const resolvedAddress = `${city}${country}`;
         console.log(resolvedAddress)
         localStorage.setItem('resolvedAddress', resolvedAddress);
+        setPrompt(false);
         setAddress(resolvedAddress);
+        localStorage.setItem('address', resolvedAddress);
         checkCountry(country);
       }
     } catch (error) {
@@ -161,7 +168,8 @@ const { data, isLoading, isError, error } = useQuery({
     queryKey: ['weatherData', address], 
     queryFn: async () => {
         const splitAddress = address.split(',');
-        const result = await fetchData(splitAddress[0]?.trim(), splitAddress.at(-1)?.trim());
+        const splitCity =  splitAddress.length > 2 ? splitAddress.slice(0, splitAddress.length -1) : splitAddress[0]?.trim();
+        const result = await fetchData(splitCity, splitAddress.at(-1)?.trim());
         console.log('Fetch result:', result);
         if (userUnitPreference) {
             checkCountry(userUnitPreference);
@@ -644,13 +652,15 @@ useEffect(() => {
     id='body'>
         {prompt ? (
             <div className="weather-app h-screen bg-slate-50" id="target">
-                <LocationForm address={address} setAddress={setAddress} convertCoordinates={convertCoordinates} />
+                <LocationForm address={address} setAddress={setAddress}
+                 convertCoordinates={convertCoordinates} setPrompt={setPrompt} />
             </div>
         ) : dayPage ? (
             <Days 
             data={data} checkCountry={checkCountry} 
              Overview={Overview} indexHour={indexHour}
              RecentSearches={RecentSearches} address={address}
+             setCurrentKey={setCurrentKey}
              recentSearch={recentSearch} showSetting={showSetting}
              settingsZ={settingsZ} sunPosition={sunPosition} 
              position={position} getTabWidth={getTabWidth} 

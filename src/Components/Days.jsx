@@ -7,12 +7,13 @@ import './weather.css';
 import '../index.css';
 import '../App.css';
 import './days.css';
+import { setCartesian } from 'mathjs';
 
 const Days = ({
     data,  Overview, RecentSearches, setData,
     HourlyList, dayIndex, indexHour, setIndexHour, 
     address, recentSearch, showSetting, settingsZ,
-    getTabWidth,
+    getTabWidth, setCurrentKey, 
     setRecentSearch, setSettingZ, CurrentConditions,
     onPageUpdate, defaultTempUnit, tempSymbol, 
     hourMinFormat, precipType, position,
@@ -137,7 +138,7 @@ const Days = ({
                 <div className="recents ">
                     <RecentSearches 
                     data={data} setData={setData} 
-                    indexHour={indexHour} address={address}
+                    indexHour={indexHour} address={address} setCurrentKey={setCurrentKey}
                     recentSearch={recentSearch} showSetting={showSetting}
                     ref={{ tabRef, recentsRef }} getTabWidth={getTabWidth}
                     tabWidth={tabWidth}

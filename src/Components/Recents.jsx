@@ -53,7 +53,7 @@ const RecentSearches = forwardRef(
           setCurrentKey(userPreferedKey);
         } 
       }
-    }, []);
+    }, [address]);
 
     useEffect(() => {
       if (!defaultTempUnit) return; // Ensure function exists before running
@@ -100,35 +100,32 @@ const RecentSearches = forwardRef(
       }
     }
 
-    useEffect(() => {
-      if (fallBackKey) {
-        console.log("fallback key is", fallBackKey);
-        const fallbackCountry = fallBackKey.split(':').at(-1);
-        const newData = cachedData[fallBackKey.replace(':', ',')];
-        
-        checkCountry(fallbackCountry[fallbackCountry.length - 1]);
-        console.log('Deleted and set new country');
-      }
-    }, [fallBackKey]); 
 
     const removeLocation = (pickedLocation) => {
-      setFallBackKey(currentKey);
-      console.log(currentKey);
-      console.log('the fallback key used ', fallBackKey);
-      
-      console.log(cachedData[pickedLocation]);
-      const itemToBeRemoved = pickedLocation;      
-      cachedData[itemToBeRemoved] = {};
-      delete cachedData[itemToBeRemoved];
+      const cachedData = JSON.parse(localStorage.getItem("weatherCache")) || {};
+      delete cachedData[pickedLocation];
       localStorage.setItem("weatherCache", JSON.stringify(cachedData));
-      console.log("key to be deleted", itemToBeRemoved);
-      console.log("the prefered saved location is", preferedKey);
 
-      if (preferedKey === itemToBeRemoved) {
-        console.log('the saved location is being deleted');
-        localStorage.removeItem("savedKey");
+      const updatedLocations = locationsData.filter(
+        (location) => location.key !== pickedLocation
+      );
+      setLocationsData(updatedLocations);
+      setDisplayAddress(fallBackKey.replace(":", ","));
+
+      if (currentKey === pickedLocation) {
+        const fallbackKey = updatedLocations.length > 0 ? updatedLocations[0].key : "";
+        setCurrentKey(fallbackKey);
+        setAddress(fallbackKey.replace(":", ","));
+        setDisplayAddress(fallbackKey.replace(":", ","));
+        const fallbackCountry = fallbackKey.split(":").at(-1);
+        checkCountry(fallbackCountry);
       }
-    }
+
+      if (preferedKey === pickedLocation) {
+        localStorage.removeItem("savedKey");
+        setPreferedKey("");
+      }
+    };
 
     console.log('our currentKey now is? ', currentKey);
     console.log('our FallbackKey now is? ', fallBackKey);

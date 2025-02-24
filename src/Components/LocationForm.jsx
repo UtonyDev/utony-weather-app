@@ -4,7 +4,7 @@ import './weather.css';
 import '../index.css';
 import '../App.css';
 
-const LocationForm = React.memo(({ address, setAddress, convertCoordinates }) => {
+const LocationForm = React.memo(({ address, setAddress, setPrompt, convertCoordinates }) => {
     const [city, setCity] = useState('');
     const [country, setCountry] = useState('');
 
@@ -29,6 +29,7 @@ const LocationForm = React.memo(({ address, setAddress, convertCoordinates }) =>
                 const { latitude, longitude } = position.coords;
 
                 await convertCoordinates(latitude, longitude);
+                setPrompt(false);
                 
                 console.log(`Latitude: ${latitude}, Longitude: ${longitude}`);
               },
