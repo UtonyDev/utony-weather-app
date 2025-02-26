@@ -21,7 +21,6 @@ const RecentSearches = forwardRef(
       getTabWidth,
       address,
       setAddress,
-      displayAddress,
       setDisplayAddress,
       currentKey, 
       setCurrentKey,
@@ -31,11 +30,10 @@ const RecentSearches = forwardRef(
     const [locationsData, setLocationsData] = useState([]);
     const [preferedKey, setPreferedKey] = useState('');
     const [fallBackKey, setFallBackKey] = useState('');
-    const weatherCacheKey = "weatherCache";
     const { tabRef, recentsRef } = ref;
 
-    let userPreferedCountry = localStorage.getItem("savedKey") || [];
-    let userPreferedKey = String(userPreferedCountry).replace(/"/g, "").trim(); 
+    let userPreferedLocation = localStorage.getItem("savedKey") || [];
+    let userPreferedKey = String(userPreferedLocation).replace(/"/g, "").trim(); 
     console.log(userPreferedKey);
 
     let cachedData = JSON.parse(localStorage.getItem("weatherCache")) || {};
@@ -44,16 +42,22 @@ const RecentSearches = forwardRef(
       if (Object.keys(cachedData).length > 0) {
         setFallBackKey(currentKey);
         console.log("CURRENT KEY",address.replace(/,\s*([^,]*)$/, ':$1'))
+        localStorage.setItem('currentAddress', address);
         
-        if (currentKey === 0 && userPreferedKey.length === 0) {
+        if (localStorage.getItem('currentAddress')
+        === address && userPreferedLocation.length === 0) {
           console.log("highlighting current item");
           setCurrentKey(address.replace(/,\s*([^,]*)$/, ':$1'));
-        } else if (userPreferedKey || userPreferedKey === preferedKey) {
+          localStorage.setItem('currentAddress', address);
+        } else if (userPreferedLocation.length > 0 || userPreferedKey === preferedKey) {
           console.log('using the user favourite location.')
           setCurrentKey(userPreferedKey);
+          localStorage.setItem('currentAddress', userPreferedKey);
         } 
       }
-    }, [address]);
+    }, []);
+
+    console.log('the current key from the CACHE is ', currentKey);
 
     useEffect(() => {
       if (!defaultTempUnit) return; // Ensure function exists before running
@@ -168,6 +172,7 @@ const RecentSearches = forwardRef(
                   console.log("the main key is", key);
                   const selectedLocationData = cachedData[key];
                   setCurrentKey(key);
+                  localStorage.setItem('currentAddress', key);
                   await setAddress(key.replace(':', ','));
                   await setDisplayAddress(key.replace(':', ','));
                   const currentCountry = key.split(':');

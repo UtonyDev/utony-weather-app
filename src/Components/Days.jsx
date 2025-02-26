@@ -12,8 +12,8 @@ import { setCartesian } from 'mathjs';
 const Days = ({
     data,  Overview, RecentSearches, setData,
     HourlyList, dayIndex, indexHour, setIndexHour, 
-    address, recentSearch, showSetting, settingsZ,
-    getTabWidth, setCurrentKey, 
+    address, setAddress, recentSearch, showSetting, settingsZ,
+    getTabWidth, setCurrentKey, setDisplayAddress, checkCountry,
     setRecentSearch, setSettingZ, CurrentConditions,
     onPageUpdate, defaultTempUnit, tempSymbol, 
     hourMinFormat, precipType, position,
@@ -138,7 +138,9 @@ const Days = ({
                 <div className="recents ">
                     <RecentSearches 
                     data={data} setData={setData} 
-                    indexHour={indexHour} address={address} setCurrentKey={setCurrentKey}
+                    indexHour={indexHour} address={address}
+                    setAddress={setAddress} setCurrentKey={setCurrentKey}
+                    setDisplayAddress={setDisplayAddress} checkCountry={checkCountry}
                     recentSearch={recentSearch} showSetting={showSetting}
                     ref={{ tabRef, recentsRef }} getTabWidth={getTabWidth}
                     tabWidth={tabWidth}

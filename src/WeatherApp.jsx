@@ -28,7 +28,10 @@ function WeatherApp() {
     return localStorage.getItem('address') || ''; 
   });  const [query, setQuery] = useState("");
   const prevAddress = useRef(true);
-  const [currentKey, setCurrentKey] = useState(0);
+  const [currentKey, setCurrentKey] = useState(() => {
+    return localStorage.getItem('currentAddress') || '';
+  }
+  );
   const [suggestions, setSuggestions] = useState([]);
   const [holdResult, setHoldResult] = useState('');
   const [dayPage, setDayPage] = useState(false);
@@ -58,6 +61,7 @@ function WeatherApp() {
 
   const iconBasePath = '/GWeatherIcons/';
   console.log("the start up address is", address);
+  console.log('the current Key exist? ', currentKey === '');
 
 const getFromLocalStorage = () => {
     const weatherCacheKey = 'weatherCache';
@@ -648,7 +652,7 @@ useEffect(() => {
     <div 
     style={{ minHeight: '100vh' }}
 
-    className='h-auto w-[100%] relative bg-contain md:bg-cover' 
+    className='h-auto w-[100%] relative ' 
     id='body'>
         {prompt ? (
             <div className="weather-app h-screen bg-slate-50" id="target">
@@ -660,7 +664,8 @@ useEffect(() => {
             data={data} checkCountry={checkCountry} 
              Overview={Overview} indexHour={indexHour}
              RecentSearches={RecentSearches} address={address}
-             setCurrentKey={setCurrentKey}
+             setAddress={setAddress} setCurrentKey={setCurrentKey}
+             setDisplayAddress={setDisplayAddress}
              recentSearch={recentSearch} showSetting={showSetting}
              settingsZ={settingsZ} sunPosition={sunPosition} 
              position={position} getTabWidth={getTabWidth} 
