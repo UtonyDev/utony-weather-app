@@ -183,7 +183,8 @@ const RecentSearches = forwardRef(
                 ref={tabRef}
                 className={`location-tab bg-[#F9F9FB] p-2 rounded-lg border-1 border-gray-200 my-2 z-20`}
                 style={{
-                    backgroundColor: currentKey === key ? '#ECF8F7' : '#F9F9FB', 
+                    backgroundColor: currentKey === key ? '#ECF8F7' : '#F9F9FB',
+                    borderColor: currentKey === key ? "#1B5A4D" : "",
                 }}>
                 <h3 
                  className="title mb-3 font-normal"

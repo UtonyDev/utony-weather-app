@@ -34,6 +34,7 @@ function WeatherApp() {
   );
   const [suggestions, setSuggestions] = useState([]);
   const [holdResult, setHoldResult] = useState('');
+  const [errMessage, setErrMessage] = useState('');
   const [dayPage, setDayPage] = useState(false);
   const [dayIndex, setDayIndex] = useState(0);
   const [displayAddress, setDisplayAddress] = useState('');
@@ -74,7 +75,7 @@ const saveToLocalStorage = (city, country, storedData) => {
     const cacheKey = `${city}:${country}`;
     cachedData[cacheKey] = {
         storedData,
-        timestamp: new Date().getHours() * 60 * 60 * 1000,
+        timestamp: Date.now(),
       };
     localStorage.setItem(weatherCacheKey, JSON.stringify(cachedData));
 };
@@ -87,31 +88,38 @@ const fetchData = async (city, country) => {
     const cacheKey = `${city}:${country}`;
 
     const fetchNewData = async (city, country) => {
-        console.log('Fetching new data');
-        const response = await fetch(`https://utony-weather-server.onrender.com/api/weather?city=${city}&country=${country}`);
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
+        console.log('Fetching new data'); 
+        try {
+            const response = await axios.get(`https://utony-weather-server.onrender.com/api/weather?city=${city}&country=${country}`);
+            
+            setPrompt(false);
+            const jsonData = response.data;
+
+            saveToLocalStorage(city, country, jsonData);
+            console.log("the response is", jsonData);
+            return jsonData;
+
+        } catch (error) {
+          console.log(error.message);
+          setErrMessage(error.message);
         }
-        const jsonData = await response.json();
-
-        setPrompt(false);
-
-        saveToLocalStorage(city, country, jsonData)
-        return jsonData;
     }
     console.log('the cache exist ? ', Object.keys(cachedJsonData).length > 0);
     if (Object.keys(cachedJsonData).length > 0 && prevAddress.current ) {
         console.log("Using cached json data", cachedJsonData[cacheKey].storedData);
         const timeStamp = cachedJsonData[cacheKey].timestamp;
-        console.log("the time for", address, " is ", timeStamp)
-        const staleTime = 1000 * 60 * 60 * 1; // let's test for 2 min interval stale time
+        console.log("the timestamp for", address, " is ", timeStamp)
+        const staleTime = 1000 * 60 * 60 * 1; // 1hr interval stale time
         console.log(staleTime); 
-        const currentMSHour = new Date().getHours() * 60 * 60 * 1000;
-        const hourState = timeStamp + staleTime
-        console.log('the hour state is', hourState)
-        console.log('the current hour is', currentMSHour);
+        const now = new Date();
+        now.setHours(indexHour, 0, 0, 0);
+        const currentUNIXtime = now.getTime(); 
+        const timeState = currentUNIXtime + (1000 * 3600);
+        console.log('the current unx hour is', currentUNIXtime);
+        console.log('the timeSTATE is', timeState);
+        console.log(timeState > timeStamp);
 
-        if (hourState < currentMSHour) {
+        if (timeState > timeStamp) {
             console.log('staletime exceeded, time to refresh');
             if (userPreferedLocation.length > 0) {
                 console.log('re-fetching the user favorite location');
@@ -130,7 +138,7 @@ const fetchData = async (city, country) => {
                 console.log('the preferred key selected is ', userPreferedKey);
                 return cachedJsonData[userPreferedKey].storedData;        
             } else {
-                console.log('nah... continuing using the cache');
+                console.log('NAH!!!... continuing using the cache');
                 setPrompt(false);
                 return cachedJsonData[cacheKey].storedData;
             }
@@ -169,7 +177,7 @@ const convertCoordinates = async (latitude, longitude) => {
 };
 
 const { data, isLoading, isError, error } = useQuery({
-    queryKey: ['weatherData', address], 
+    queryKey: ['weatherData', address],
     queryFn: async () => {
         const splitAddress = address.split(',');
         const splitCity =  splitAddress.length > 2 ? splitAddress.slice(0, splitAddress.length -1) : splitAddress[0]?.trim();
@@ -642,6 +650,9 @@ useEffect(() => {
             <img src="/mark.png" className="place-self-start p-2" />
             <p className="text-red-700 w-3/4 top-1/3 p-2">
                 Error: {error.message}
+            </p>
+            <p className="text-red-700 w-3/4 p-2">
+                Cause: {errMessage}
             </p>
         </div>
     </div>
