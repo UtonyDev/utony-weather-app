@@ -463,7 +463,6 @@ const { data, isLoading, isError, error } = useQuery({
         const angleInterval = [180, 0];
         console.log(angleInterval[0]);
         // Use linear interpolation to get value of angles at various time intervals (current time)
-    
         const angle = angleInterval[0] + (((parseFloat(indexHour) - T1) * (angleInterval[0] - angleInterval[1])) / (T2 - T1));
         console.log('angley', angle);
     
@@ -563,7 +562,7 @@ const showSetting = () => {
             }
         }
       } else {
-          console.log('elemnt doesnt exist yet')
+          console.log('elemnt doesnt exist yet');
       }
   }
 
@@ -604,8 +603,8 @@ const getTabWidth = () => {
       checkCountry(userUnitPreference);
   }
 
-useEffect(() => {
-    if (data) {
+  const setDynamicBackdrop = (data) => {
+          if (data) {
         const weathercondition = data.days[dayIndex].hours[indexHour].conditions;
         const body = document.getElementById("body");
         console.log(weathercondition);
@@ -618,7 +617,7 @@ useEffect(() => {
             body.classList.add(`bg-[url('/clear-day-backdrop.jpg')]`);
             body.classList.remove(`bg-[url('/cloudy-backdrop.jpg')]`);
             body.classList.remove(`bg-[url('/rain-backdrop.jpeg')]`);
-        } else if (weathercondition === 'Overcast') {
+        } else if (cloudy.some(cond => cond.includes(weathercondition))) {
             console.log('no clear');
             body.classList.add(`bg-[url('/cloudy-backdrop.jpg')]`);
             body.classList.remove(`bg-[url('/clear-day-backdrop.jpg')]`);
@@ -630,7 +629,10 @@ useEffect(() => {
             body.classList.remove(`bg-[url('/cloudy-backdrop.jpg')]`);
         }
     }
-  }, [data, indexHour, dayIndex]);
+  }
+
+  useEffect(() => {setDynamicBackdrop()}, [data, indexHour, dayIndex]);
+
 
   if (isLoading) { 
     return (
@@ -703,7 +705,11 @@ useEffect(() => {
         ) : (
         <>
             <div id="weather-app" className={`weather-app-grid grid md: justify-items-center col-auto gap-5 md:gap-0 relative md:h-full z-20 overflow-clip`} 
-                onLoad={defaultTempUnit}
+                onLoad={() => {
+                    defaultTempUnit();
+                    setDynamicBackdrop(data);
+                    }
+                }
                 onClick={hideSettings}
              >
                 <div className="search z-50 relative top-2 md:top-0 md:m-0 p-1 grid grid-auto w-full max-h-[48px]">
