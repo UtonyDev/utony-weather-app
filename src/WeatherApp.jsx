@@ -273,6 +273,7 @@ const { data, isLoading, isError, error } = useQuery({
   const resetData = () => {
       localStorage.removeItem('weatherCache');
       localStorage.removeItem('userUnitPref');
+      localStorage.removeItem('savedItem');
       window.location.reload();
   }
 
@@ -637,9 +638,11 @@ const getTabWidth = () => {
   if (isLoading) { 
     return (
     <div className="bg-[#f1f1f1] place-items-center relative grid w-full h-screen">
-            <span className="absolute top-1/3 spinner"></span>
+            <span className="absolute top-1/3 ">
+            <img src="rain-gif.gif" className='size-20'/>
+            </span>
             <div className="plead-message absolute top-[55%]">
-                Please hold on, this may take a while...
+                Fetching data...
             </div>
         </div>
     )
