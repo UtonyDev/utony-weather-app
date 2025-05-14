@@ -637,7 +637,7 @@ const getTabWidth = () => {
 
   if (isLoading) { 
     return (
-    <div className="bg-[#f1f1f1] place-items-center relative grid w-full h-screen">
+    <div className="bg-white place-items-center relative grid w-full h-screen">
             <span className="absolute top-1/3 ">
             <img src="rain-gif.gif" className='size-20'/>
             </span>
