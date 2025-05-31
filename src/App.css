@@ -4,7 +4,15 @@
     background: url("/icons8-search-location-48.png") no-repeat 12px center;
     background-size: 1.2em; /* Adjust icon size */
     background-color: #e5e5e5;
-  }
+}
+
+.main-temp {
+  background: -webkit-linear-gradient(#5fcac3, #0b4f4a);
+  background: linear-gradient(#5fcac3, #0b4f4a);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
 
 .hide-card {
   display: none;
