@@ -88,7 +88,7 @@ const fetchData = async (city, country) => {
     const cacheKey = `${city}:${country}`;
 
     const fetchNewData = async (city, country) => {
-        console.log('Fetching new data'); 
+        console.log('Fetching new data');
         try {
             const response = await axios.get(`https://utony-weather-server.onrender.com/api/weather?city=${city}&country=${country}`);
             
