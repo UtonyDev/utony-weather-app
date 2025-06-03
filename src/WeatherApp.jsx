@@ -611,7 +611,7 @@ const getTabWidth = () => {
         console.log(weathercondition);
         const clear = "Clear";
         const cloudy = ["Partially cloudy", "Overcast"];
-        const rainy = "Rain, Partially cloudy";
+        const rainy = ["Rain, Partially cloudy", "Rain, Overcast"];
 
         if (weathercondition.includes(clear)) {
             console.log('clear skyies');            
@@ -623,7 +623,7 @@ const getTabWidth = () => {
             body.classList.add(`bg-[url('/cloudy-backdrop.jpg')]`);
             body.classList.remove(`bg-[url('/clear-day-backdrop.jpg')]`);
             body.classList.remove(`bg-[url('/rain-backdrop.jpeg')]`);
-        } else if (weathercondition.includes(rainy)) {
+        } else if (rainy.some(cond => cond.includes(weathercondition))) {
             console.log('Raining');
             body.classList.add(`bg-[url('/rain-backdrop.jpeg')]`);
             body.classList.remove(`bg-[url('/clear-day-backdrop.jpg')]`);
