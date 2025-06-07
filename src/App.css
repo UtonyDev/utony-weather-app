@@ -22,32 +22,39 @@
   -webkit-text-fill-color: transparent;
 }
 
-@keyframes bars {
+@keyframes glow {
   0% {
-    transform: scaleX(1);
+    background-position: 0% 0;
   }
   50% {
-    transform: scaleX(10);
+    background-position: 200% 0;
   }
   100% {
-    transform: scaleX(1);
+    background-position: 0% 0;
   }
-  
 }
 
-.animate-bars {
+.animate-bar1 {
   display: inline-block;
-  background-color: #a21caf;
-  transform-origin: top left;
-  animation: bars 2s infinite;
+  position: relative;
+  width: 70%;
+  background: #EEAECA; background: linear-gradient(to right, #eeaecab3 0%, #94bbe9b3 40%, #eeaecab3 100%);
+  background-size: 200% auto;
+  transition: all 0.5s ease-in-out;
+  animation: glow 1s 0.5s linear forwards infinite;
 }
 
-.animate-bars2 {
+.animate-bar2 {
   display: inline-block;
-  background-color: #4338ca;
-  transform-origin: top left;
-  animation: bars 2s infinite;
-  animation-delay: .5s;
+  position: relative;
+  top: -15%;
+  padding: 0;
+  left: 12.5%;
+  width: 75%;
+  background: linear-gradient(to right, #94bbe9b3 0%, #eeaecab3 40%, #94bbe9b3 100%);
+  background-size: 200% auto;
+  transition: all 0.5s ease-in-out;
+  animation: glow 1s 1s linear forwards infinite;
 }
 
 .hide-card {
