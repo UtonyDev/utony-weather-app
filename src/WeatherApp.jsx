@@ -609,23 +609,19 @@ const getTabWidth = () => {
           if (data) {
         const weathercondition = data.days[dayIndex].hours[indexHour].conditions;
         const body = document.getElementById("body");
-        console.log(weathercondition);
         const clear = "Clear";
         const cloudy = ["Partially cloudy", "Overcast"];
         const rainy = ["Rain, Partially cloudy", "Rain, Overcast"];
 
         if (weathercondition.includes(clear)) {
-            console.log('clear skyies');            
             body.classList.add(`bg-[url('/clear-day-backdrop.jpg')]`);
             body.classList.remove(`bg-[url('/cloudy-backdrop.jpg')]`);
             body.classList.remove(`bg-[url('/rain-backdrop.jpeg')]`);
         } else if (cloudy.some(cond => cond.includes(weathercondition))) {
-            console.log('no clear');
             body.classList.add(`bg-[url('/cloudy-backdrop.jpg')]`);
             body.classList.remove(`bg-[url('/clear-day-backdrop.jpg')]`);
             body.classList.remove(`bg-[url('/rain-backdrop.jpeg')]`);
         } else if (rainy.some(cond => cond.includes(weathercondition))) {
-            console.log('Raining');
             body.classList.add(`bg-[url('/rain-backdrop.jpeg')]`);
             body.classList.remove(`bg-[url('/clear-day-backdrop.jpg')]`);
             body.classList.remove(`bg-[url('/cloudy-backdrop.jpg')]`);
@@ -754,7 +750,7 @@ const getTabWidth = () => {
                   indexHour={indexHour} defaultTempUnit={defaultTempUnit}
                   tempSymbol={tempSymbol} iconBasePath={iconBasePath} />
 
-                <AIOverview data={data} dayIndex={dayIndex}/>
+                <AIOverview data={data} dayIndex={dayIndex} address={address}/>
 
                 <HourlyList 
                   data={data} dayIndex={dayIndex} indexHour={indexHour} ref={{ listContainer, hourTimeRef }}

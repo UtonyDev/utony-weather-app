@@ -3,8 +3,24 @@ import '../index.css';
 import '../App.css';
 import { useState } from 'react';
 
-const AIOverview = ({ data, dayIndex }) => {
+const AIOverview = ({ data, dayIndex, address }) => {
     const [isLoading, setIsLoading] = useState(false);
+
+/** 
+    if (data) {
+        console.log(data.address);
+        const addressArray = data.address.split(',');
+        const city = addressArray[0];
+        const country = addressArray.length > 2 ? addressArray.at(-1) : addressArray[1];
+        console.log(`the city and country needed for the AI summary is ${city} and ${country} and the date is ${data.days[dayIndex].datetime}`)
+    }*/
+   console.log('the address is ', address);
+    const addressArray = address.split(',');
+    const city = addressArray[0];
+    const country = addressArray.length > 2 ? addressArray.at(-1) : addressArray[1];
+    const date = data.days[dayIndex].datetime;
+    console.log('the date is ', typeof date);
+    console.log(`the city and country needed for the AI summary is ${city} and ${country} and the date is ${data.days[dayIndex].datetime}`);
 
     if (isLoading) {
         // Placeholder for AI button animation
@@ -21,10 +37,27 @@ const AIOverview = ({ data, dayIndex }) => {
         console.log("AI Overview clicked");
         console.log("the day index is: ", dayIndex);
         console.log("the available data is: ", data.days[dayIndex]);
-        // You can implement the actual functionality here
+        
+        try {
+            // You can implement the actual functionality here
         setIsLoading(true);
         // Simulate a delay to mimic an API call or processing time
-        await new Promise(resolve => setTimeout(resolve, 3000)); // Simulate a delay
+        const url = `http://localhost:8000/weather?city=${city}&country=${country}&date=${date}}`;
+        console.log('the base url is ', url);
+
+        const res = await fetch(url)
+
+        const sum = await res.json();
+        console.log('the AI summary is ', sum);
+
+        return sum;
+        }
+        catch (error) {
+            console.error("Error fetching AI overview:", error);
+            setIsLoading(false);
+            return;
+        }
+        console.log('the AI summary ought to be ', sum)
         // After the delay, reset the loading state
         setIsLoading(false);
         console.log("AI Overview completed");
