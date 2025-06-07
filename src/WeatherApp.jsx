@@ -6,6 +6,7 @@ import { debounce } from 'lodash';
 import CurrentConditions from './Components/CurrentConditions';
 import HourlyList from './Components/HourlyList';
 import Overview from './Components/Overview';
+import AIOverview from './Components/AIOverview.jsx';
 import Days from './Components/Days';
 import LocationForm from './Components/LocationForm';
 import RecentSearches from './Components/Recents';
@@ -753,7 +754,7 @@ const getTabWidth = () => {
                   indexHour={indexHour} defaultTempUnit={defaultTempUnit}
                   tempSymbol={tempSymbol} iconBasePath={iconBasePath} />
 
-                <div className="summary"></div>
+                <AIOverview data={data} dayIndex={dayIndex}/>
 
                 <HourlyList 
                   data={data} dayIndex={dayIndex} indexHour={indexHour} ref={{ listContainer, hourTimeRef }}
@@ -772,7 +773,7 @@ const getTabWidth = () => {
                     </div>
 
                     <ul className=" max-h-auto">
-                        {data.days.slice(0, 10).map((day, index) => (
+                        {data?.days.slice(0, 10).map((day, index) => (
                             <motion.li key={index} 
                                 className="flex flex-row justify-between bg-[#F9F9FB] px-3 py-3 rounded-md active:scale-95" 
                                 style={{
