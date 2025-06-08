@@ -279,36 +279,41 @@ const handleSubmit = (e) => {
     // Map selectors and choose that which is found in input string
     const matchedIndx = sep.findIndex(char => query.includes(char));
     console.log(matchedIndx);
+    // Block single word inputs.
+    if (matchedIndx >= 0) {
+        const splitQuery = query.split(sep[matchedIndx])
+        console.log('the current value in the input is', splitQuery);
+        // Remove comma incase included.
+        const mappedQuery = splitQuery.map(que => {
+            if (que.includes(',')) {
+                return que.replace(',', '');
+            } else {
+                return que;
+            }
+        })
+        console.log("the formatted query array: ", mappedQuery);
+        const city = mappedQuery[0];
+        const country = mappedQuery.at(-1);
+        const enteredLocation = `${city},${country}`;
 
-    const splitQuery = query.split(sep[matchedIndx])
-    console.log('the current value in the input is', splitQuery);
-    // Remove comma incase included.
-    const mappedQuery = splitQuery.map(que => {
-        if (que.includes(',')) {
-            return que.replace(',', '');
+        console.log("the user searched for ", enteredLocation);
+            prevAddress.current =  false;
+            // Fetch data by changing address.
+            setAddress(enteredLocation);
+            // Remove the search suggestions 
+                setSuggestions([])
+
+        if (userUnitPreference) {
+            checkCountry(userUnitPreference);
+            console.log('using user pref');
         } else {
-            return que;
+            checkCountry(country);
+            console.log('using location');
         }
-    })
-    console.log("the formatted query array: ", mappedQuery);
-    const city = mappedQuery[0];
-    const country = mappedQuery.at(-1);
-    const enteredLocation = `${city},${country}`;
-
-    console.log("the user searched for ", enteredLocation);
-          prevAddress.current =  false;
-          // Make network request by changng address.
-          setAddress(enteredLocation);
-        // Remove the search suggestions 
-            setSuggestions([])
-
-          if (userUnitPreference) {
-              checkCountry(userUnitPreference);
-              console.log('using user pref');
-          } else {
-              checkCountry(country);
-              console.log('using location');
-          }
+    } else {
+        console.log("Please enter a valid city and country");
+    }
+    
   }
   
   const resetData = () => {
