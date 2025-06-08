@@ -27,7 +27,8 @@ function WeatherApp() {
   const [indexHour, setIndexHour] = useState(0);
   const [address, setAddress] = useState(() => {
     return localStorage.getItem('address') || ''; 
-  });  const [query, setQuery] = useState("");
+  }); 
+    const [query, setQuery] = useState("");
   const prevAddress = useRef(true);
   const [currentKey, setCurrentKey] = useState(() => {
     return localStorage.getItem('currentAddress') || '';
@@ -57,10 +58,6 @@ function WeatherApp() {
   let userUnitPreference = localStorage.getItem('userUnitPref');
   let userPreferedLocation = localStorage.getItem("savedKey") || [];
   let userPreferedKey = String(userPreferedLocation).replace(/"/g, "").trim(); 
-  console.log(userPreferedLocation.length > 0);
-  console.log(userPreferedKey);
-  console.log('the prev address was ', prevAddress.current);
-
   const iconBasePath = '/GWeatherIcons/';
   console.log("the start up address is", address);
   console.log('the current Key exist? ', currentKey === '');
@@ -216,7 +213,9 @@ const { data, isLoading, isError, error } = useQuery({
               });
 
               const results = response.data.results.map((result) => result.formatted);
+              console.log("the Raw search result from Opencage is: ", results)
               setHoldResult(results);
+              console.log("the Formatted search result from Opencage is: ", holdResult);
               setSuggestions(results);
           
           } catch (error) {
@@ -229,12 +228,13 @@ const { data, isLoading, isError, error } = useQuery({
       }
   });
 
-  const unformatLocation = useCallback((index) => {
+  // Searches for location selected by user.
+    const searchLocation = useCallback((index) => {
       const chosenList = holdResult[index];
       console.log(chosenList);
 
-     const splitData = chosenList.split(',');
-     console.log(splitData)
+        const splitData = chosenList.split(',');
+        console.log(splitData)
       if (splitData) {
           const newcity = splitData[dayIndex];
           const newcountry = splitData[splitData.length - 1].trim();
@@ -259,16 +259,56 @@ const { data, isLoading, isError, error } = useQuery({
   let searchBar = document.querySelector('.search-bar');
   const joinSuggestions = () => {
     if (searchBar) {
-    if (suggestions.length >= 1) {
-        searchBar.classList.replace('rounded-full', 'rounded-t-lg');
-        searchBar.classList.remove('focus:rounded-full');
-        searchBar.classList.add('scale-[1.025]');
-    } else {
-        searchBar.classList.replace('rounded-t-lg', 'rounded-full');
-        searchBar.classList.add('focus:rounded-full');
-        searchBar.classList.remove('scale-[1.025]');
+        if (suggestions.length >= 1) {
+            searchBar.classList.replace('rounded-full', 'rounded-t-lg');
+            searchBar.classList.remove('focus:rounded-full');
+            searchBar.classList.add('scale-[1.025]');
+        } else {
+            searchBar.classList.replace('rounded-t-lg', 'rounded-full');
+            searchBar.classList.add('focus:rounded-full');
+            searchBar.classList.remove('scale-[1.025]');
+        }
     }
-    }
+  }
+
+  // Search the location the user entered without suggestion.
+const handleSubmit = (e) => {
+    e.preventDefault();
+    // Possible selectors for search imput
+    const sep = [' ', ','];
+    // Map selectors and choose that which is found in input string
+    const matchedIndx = sep.findIndex(char => query.includes(char));
+    console.log(matchedIndx);
+
+    const splitQuery = query.split(sep[matchedIndx])
+    console.log('the current value in the input is', splitQuery);
+    // Remove comma incase included.
+    const mappedQuery = splitQuery.map(que => {
+        if (que.includes(',')) {
+            return que.replace(',', '');
+        } else {
+            return que;
+        }
+    })
+    console.log("the formatted query array: ", mappedQuery);
+    const city = mappedQuery[0];
+    const country = mappedQuery.at(-1);
+    const enteredLocation = `${city},${country}`;
+
+    console.log("the user searched for ", enteredLocation);
+          prevAddress.current =  false;
+          // Make network request by changng address.
+          setAddress(enteredLocation);
+        // Remove the search suggestions 
+            setSuggestions([])
+
+          if (userUnitPreference) {
+              checkCountry(userUnitPreference);
+              console.log('using user pref');
+          } else {
+              checkCountry(country);
+              console.log('using location');
+          }
   }
   
   const resetData = () => {
@@ -606,7 +646,8 @@ const getTabWidth = () => {
   }
 
   const setDynamicBackdrop = (data) => {
-          if (data) {
+    /** 
+    if (data) {
         const weathercondition = data.days[dayIndex].hours[indexHour].conditions;
         const body = document.getElementById("body");
         const clear = "Clear";
@@ -626,7 +667,7 @@ const getTabWidth = () => {
             body.classList.remove(`bg-[url('/clear-day-backdrop.jpg')]`);
             body.classList.remove(`bg-[url('/cloudy-backdrop.jpg')]`);
         }
-    }
+    }*/
   }
 
   useEffect(() => {setDynamicBackdrop()}, [data, indexHour, dayIndex]);
@@ -713,21 +754,23 @@ const getTabWidth = () => {
                 onClick={hideSettings}
              >
                 <div className="search z-50 relative top-2 md:top-0 md:m-0 p-1 grid grid-auto w-full max-h-[48px]">
-                    <motion.input type="search"
-                     value={query} 
-                     className='search-icon search-bar justify-self-center w-11/12 text-md row-span-auto p-3 md:mt-1 rounded-full focus:rounded-full focus:scale-[1.025] focus:bg-[#F5F5F5] focus-within:outline-none border border-neutral-300 focus:border-neutral-400 text-neutral-700 text-base
-                     tracking-[0.0125] font-normal z-[50]' 
-                     name="place" id="place"
-                     onLoad={() => checkCountry(passedCountry)}
-                     onChange={InputValChange}
-                     onFocus={joinSuggestions()}
-                     style={{
-                        
-                        borderBottomLeftRadius: suggestions.length >= 1 ? 'none' : '',
-                        borderBottomRightRadius: suggestions.length >= 1 ? 'none' : '',
-                     }}
-                     placeholder={displayAddress} />
-
+                    <form className="search justify-self-center w-11/12" onSubmit={handleSubmit}>
+                        <motion.input type="search"
+                        value={query} 
+                        className='search-icon search-bar text-md w-full row-span-auto p-3 md:mt-1 rounded-full focus:rounded-full focus:scale-[1.025] focus:bg-[#F5F5F5] focus-within:outline-none border border-neutral-300 focus:border-neutral-400 text-neutral-700 text-base
+                        tracking-[0.0125] font-normal z-[50]' 
+                        name="place" id="place"
+                        onLoad={() => checkCountry(passedCountry)}
+                        onChange={InputValChange}
+                        onFocus={joinSuggestions()}
+                        style={{
+                            
+                            borderBottomLeftRadius: suggestions.length >= 1 ? 'none' : '',
+                            borderBottomRightRadius: suggestions.length >= 1 ? 'none' : '',
+                        }}
+                        placeholder={displayAddress} />
+                    </form> 
+                    
                 {suggestions.length > 0 && (
                     <ul className=' absolute justify-self-center w-11/12 top-[2.9em] md:top-[3.15rem] text-zinc-800 bg-neutral-100 border-1 border-neutral-400 rounded-b-2xl overflow-y-clip z-[50]'>
                         {suggestions.map((suggestion, index) => (
@@ -735,7 +778,7 @@ const getTabWidth = () => {
                                  () => {
                                     setQuery(suggestion);
                                     setSuggestions([]);
-                                    unformatLocation(index);
+                                    searchLocation(index);
                                     console.log(passedCountry)
                                     }
                                 }> <span className="search-image relative text-left "> <img src={`icons8-search-location-48.png`} alt="" srcSet="" className='size-5 inline ms-2' /> </span>
