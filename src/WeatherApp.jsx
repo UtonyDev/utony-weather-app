@@ -54,7 +54,7 @@ function WeatherApp() {
   const recentsRef = useRef(null);
   const dayRef = useRef([]);
   const tabRef = useRef(null);
-  const API_KEY = '124d73669936416ea36f14503e262e7d';
+  const API_KEY = import.meta.env.VITE_API_KEY;
   let userUnitPreference = localStorage.getItem('userUnitPref');
   let userPreferedLocation = localStorage.getItem("savedKey") || [];
   let userPreferedKey = String(userPreferedLocation).replace(/"/g, "").trim(); 
@@ -197,6 +197,7 @@ const { data, isLoading, isError, error } = useQuery({
   }
 );
     
+// Fetch suggestions based on the input being entered.
   const InputValChange = useCallback(async (e) => {
       const value = e.target.value;
       setQuery(value);
@@ -213,11 +214,16 @@ const { data, isLoading, isError, error } = useQuery({
               });
 
               const results = response.data.results.map((result) => result.formatted);
-              console.log("the Raw search result from Opencage is: ", results)
-              setHoldResult(results);
-              console.log("the Formatted search result from Opencage is: ", holdResult);
-              setSuggestions(results);
-          
+              if (results.length > 0) {
+                console.log("the Raw search result from Opencage is: ", results)
+                setHoldResult(results);
+                console.log("the Formatted search result from Opencage is: ", holdResult);
+                setSuggestions(results);
+              } else {
+                console.log("No search result found");
+                setSuggestions(["No search result found"])
+              }
+              
           } catch (error) {
               console.error("Error fetching suggestions:", error);
               alert(error);
@@ -271,7 +277,7 @@ const { data, isLoading, isError, error } = useQuery({
     }
   }
 
-  // Search the location the user entered without suggestion.
+  // Search the location the user entered without clicking one of the suggestions.
 const handleSubmit = (e) => {
     e.preventDefault();
     // Possible selectors for search imput
@@ -758,11 +764,11 @@ const getTabWidth = () => {
                 }
                 onClick={hideSettings}
              >
-                <div className="search z-50 relative top-2 md:top-0 md:m-0 p-1 grid grid-auto w-full max-h-[48px]">
-                    <form className="search justify-self-center w-11/12" onSubmit={handleSubmit}>
+                <div className="search z-50 relative top-2 md:top-0 md:m-0 p-1 grid row-span-1 w-full max-h-[48px] ">
+                    <form className="search relative justify-self-center md:w-[100%] border-2 row-span-1" onSubmit={handleSubmit}>
                         <motion.input type="search"
                         value={query} 
-                        className='search-icon search-bar text-md w-full row-span-auto p-3 md:mt-1 rounded-full focus:rounded-full focus:scale-[1.025] focus:bg-[#F5F5F5] focus-within:outline-none border border-neutral-300 focus:border-neutral-400 text-neutral-700 text-base
+                        className='search-icon search-bar text-md w-full p-3 md:mt-1 rounded-full focus:rounded-full focus:scale-[1.025] focus:bg-[#F5F5F5] focus-within:outline-none border border-neutral-300 focus:border-neutral-400 text-neutral-700 text-base
                         tracking-[0.0125] font-normal z-[50]' 
                         name="place" id="place"
                         onLoad={() => checkCountry(passedCountry)}
@@ -776,21 +782,29 @@ const getTabWidth = () => {
                         placeholder={displayAddress} />
                     </form> 
                     
-                {suggestions.length > 0 && (
-                    <ul className=' absolute justify-self-center w-11/12 top-[2.9em] md:top-[3.15rem] text-zinc-800 bg-neutral-100 border-1 border-neutral-400 rounded-b-2xl overflow-y-clip z-[50]'>
-                        {suggestions.map((suggestion, index) => (
-                            <li key={index} className={`p-1 flex text-neutral-950 text-[17px] font-normal hover:opacity-70 `} onClick={
-                                 () => {
-                                    setQuery(suggestion);
-                                    setSuggestions([]);
-                                    searchLocation(index);
-                                    console.log(passedCountry)
+                    {suggestions.length > 0 && (
+                        <ul className=' absolute justify-self-center w-11/12 top-[2.9em] md:top-[3.15rem] text-zinc-800 bg-neutral-100 border-1 border-neutral-400 rounded-b-2xl overflow-y-clip z-[50]'>
+                            {suggestions.map((suggestion, index) => (
+                                <li key={index} className={`p-1 flex text-neutral-950 text-[17px] font-normal hover:opacity-70 `} onClick={
+                                    () => {
+                                        if (suggestions[0] !== "No search result found") {
+                                            setQuery(suggestion);
+                                            setSuggestions([]);
+                                            searchLocation(index);
+                                            console.log(passedCountry);
+                                            console.log("the suggestion clicked was VALID")
+                                        } else {
+                                            setQuery(address);
+                                            setSuggestions([]);
+                                            console.log("Invalid suggestion cant be clicked")
+                                        }
                                     }
-                                }> <span className="search-image relative text-left "> <img src={`icons8-search-location-48.png`} alt="" srcSet="" className='size-5 inline ms-2' /> </span>
-                                 <span className="suggestions relative w-[85%] left-1 text-justify">{suggestion}</span> </li>
-                        ))}
-                    </ul>
-                )}
+                                    }> 
+                                    <span className="search-image relative text-left "> <img src={`icons8-search-location-48.png`} alt="" srcSet="" className='size-5 inline ms-2' /> </span>
+                                    <span className="suggestions relative w-[85%] left-1 text-justify">{suggestion}</span> </li>
+                            ))}
+                        </ul>
+                    )}
                 </div>
 
                 <Overview 
