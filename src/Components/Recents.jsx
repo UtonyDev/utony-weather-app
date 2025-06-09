@@ -2,9 +2,6 @@ import "./weather.css";
 import "../App.css";
 import "../index.css";
 import React, { forwardRef, useEffect, useState, useRef } from "react";
-import { px } from "framer-motion";
-import { log } from "mathjs";
-import { at } from "lodash";
 
 const RecentSearches = forwardRef(
   (
@@ -24,6 +21,8 @@ const RecentSearches = forwardRef(
       setDisplayAddress,
       currentKey, 
       setCurrentKey,
+      query,
+      setQuery
     },
     ref // Forwarded ref from parent
   ) => {
@@ -170,11 +169,11 @@ const RecentSearches = forwardRef(
                 key={key}
                 onClick={ async () => {
                   console.log("the main key is", key);
-                  const selectedLocationData = cachedData[key];
                   setCurrentKey(key);
                   localStorage.setItem('currentAddress', key);
                   await setAddress(key.replace(':', ','));
                   await setDisplayAddress(key.replace(':', ','));
+                  await setQuery(key.replace(':', ','))
                   const currentCountry = key.split(':');
                   checkCountry(currentCountry[currentCountry.length - 1]);
                   console.log(currentKey);

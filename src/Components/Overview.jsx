@@ -11,7 +11,7 @@ function Overview({
         let symb;
         const iconBasePath = '/GWeatherIcons/';
     return (
-        <div className="overview grid grid-auto md:self-end md:py-0 grid-cols-2 md:my-4 row-auto justify-self-center relative w-11/12 px-6 py-4 gap-3 z-40">
+        <div className="overview grid grid-auto md:self-end md:py-0 grid-cols-2 mt-5 md:my-4 row-auto justify-self-center relative w-11/12 px-6 py-4 gap-3 z-40">
 
             <div className="conditions text-[17px] font-medium tracking-wider text-[#202e31] relative ms-[15%] place-self-center left-[-10%] col-span-2">{data.days[dayIndex].hours[indexHour].conditions} 
                 <img loading="lazy" src={`${iconBasePath}${data.days[dayIndex].hours[indexHour].icon}.png`} alt="" className="src size-10 place-self-center" />

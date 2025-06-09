@@ -83,7 +83,7 @@ console.log(address);
 // Function to fetch weather data.
 const fetchData = async (city, country) => {
     const cachedJsonData = getFromLocalStorage();
-    const cacheKey = `${city}:${country}`;
+    const cacheKey = `${city}:${country}`;    
 
     const fetchNewData = async (city, country) => {
         console.log('Fetching new data');
@@ -102,6 +102,7 @@ const fetchData = async (city, country) => {
           setErrMessage(error.message);
         }
     }
+
     console.log('the cache exist ? ', Object.keys(cachedJsonData).length > 0);
     if (Object.keys(cachedJsonData).length > 0 && prevAddress.current ) {
         console.log("Using cached json data", cachedJsonData[cacheKey].storedData);
@@ -118,7 +119,9 @@ const fetchData = async (city, country) => {
         console.log(timeState > timeStamp);
 
         if (timeState > timeStamp) {
+            // StaleTime set has been exceeded.
             console.log('staletime exceeded, time to refresh');
+            console.log("Changed the currentKey", currentKey);
             if (userPreferedLocation.length > 0) {
                 console.log('re-fetching the user favorite location');
                 setPrompt(false);
@@ -129,9 +132,11 @@ const fetchData = async (city, country) => {
                 setPrompt(false);
                 return fetchNewData(city, country);
             }
+            
         } else {
+            // Staletime has yet to be exceeded.
             if (userPreferedLocation.length > 0) {
-                console.log('using the user favorite location');
+                console.log('using the user favorite location already in cache.');
                 setPrompt(false);
                 console.log('the preferred key selected is ', userPreferedKey);
                 return cachedJsonData[userPreferedKey].storedData;        
@@ -139,8 +144,9 @@ const fetchData = async (city, country) => {
                 console.log('NAH!!!... continuing using the cache');
                 setPrompt(false);
                 return cachedJsonData[cacheKey].storedData;
-            }
-        }
+            }            
+        }            
+
     } else {
         // fetch fresh data
         setPrompt(false);
@@ -174,12 +180,14 @@ const convertCoordinates = async (latitude, longitude) => {
     }
 };
 
+// UseQuery hook use to make request
 const { data, isLoading, isError, error } = useQuery({
     queryKey: ['weatherData', address],
     queryFn: async () => {
         const splitAddress = address.split(',');
         const splitCity =  splitAddress.length > 2 ? splitAddress.slice(0, splitAddress.length -1) : splitAddress[0]?.trim();
         const result = await fetchData(splitCity, splitAddress.at(-1)?.trim());
+        setCurrentKey(address)
         console.log('Fetch result:', result);
         if (userUnitPreference) {
             checkCountry(userUnitPreference);
@@ -683,7 +691,6 @@ const getTabWidth = () => {
 
   useEffect(() => {setDynamicBackdrop()}, [data, indexHour, dayIndex]);
 
-
   if (isLoading) { 
     return (
     <div className="bg-white place-items-center relative grid w-full h-screen">
@@ -765,11 +772,11 @@ const getTabWidth = () => {
                 onClick={hideSettings}
              >
                 <div className="search z-50 relative top-2 md:top-0 md:m-0 p-1 grid row-span-1 w-full max-h-[48px] ">
-                    <form className="search relative justify-self-center md:w-[100%] border-2 row-span-1" onSubmit={handleSubmit}>
+                    <form className="search absolute justify-self-center justify-items-center w-11/12 row-span-1 rounded-full mb-0" onSubmit={handleSubmit}>
                         <motion.input type="search"
                         value={query} 
-                        className='search-icon search-bar text-md w-full p-3 md:mt-1 rounded-full focus:rounded-full focus:scale-[1.025] focus:bg-[#F5F5F5] focus-within:outline-none border border-neutral-300 focus:border-neutral-400 text-neutral-700 text-base
-                        tracking-[0.0125] font-normal z-[50]' 
+                        className='search-icon search-bar w-full text-md md:mt-1 rounded-full focus:rounded-full focus:scale-[1] focus:bg-[#F5F5F5] focus-within:outline-none border border-neutral-300 focus:border-neutral-400 text-neutral-700 text-base
+                        tracking-[0.0125] font-normal z-[50]'
                         name="place" id="place"
                         onLoad={() => checkCountry(passedCountry)}
                         onChange={InputValChange}
@@ -783,7 +790,7 @@ const getTabWidth = () => {
                     </form> 
                     
                     {suggestions.length > 0 && (
-                        <ul className=' absolute justify-self-center w-11/12 top-[2.9em] md:top-[3.15rem] text-zinc-800 bg-neutral-100 border-1 border-neutral-400 rounded-b-2xl overflow-y-clip z-[50]'>
+                        <ul className=' absolute justify-self-center w-11/12 top-[2.6em] md:top-[2.95em] text-zinc-800 bg-neutral-100 border-1 border-neutral-400 rounded-b-2xl overflow-y-clip z-[50]'>
                             {suggestions.map((suggestion, index) => (
                                 <li key={index} className={`p-1 flex text-neutral-950 text-[17px] font-normal hover:opacity-70 `} onClick={
                                     () => {
@@ -812,7 +819,7 @@ const getTabWidth = () => {
                   indexHour={indexHour} defaultTempUnit={defaultTempUnit}
                   tempSymbol={tempSymbol} iconBasePath={iconBasePath} />
 
-                <AIOverview data={data} dayIndex={dayIndex} address={address}/>
+                <AIOverview data={data} dayIndex={dayIndex} address={currentKey} hour={indexHour} />
 
                 <HourlyList 
                   data={data} dayIndex={dayIndex} indexHour={indexHour} ref={{ listContainer, hourTimeRef }}
@@ -859,7 +866,7 @@ const getTabWidth = () => {
                      data={data}
                      indexHour={indexHour} address={address} 
                      setAddress={setAddress} currentKey={currentKey} 
-                     setCurrentKey={setCurrentKey}
+                     setCurrentKey={setCurrentKey} query={query} setQuery={setQuery}
                      ref={{ tabRef, recentsRef }} setDisplayAddress={setDisplayAddress}
                      recentSearch={recentSearch} showSetting={showSetting}
                      hideRecentSearch={hideRecentSearch}

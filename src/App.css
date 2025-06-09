@@ -17,7 +17,7 @@
   -webkit-text-fill-color: transparent;
 }
 
-.aiHeader {
+.aiContent {
   background: -webkit-linear-gradient(#5fcac3, #0b4f4a);
   background: linear-gradient(#4338ca, #a21caf);
   background-clip: text;
@@ -31,29 +31,45 @@
   height: 25%;
 }
 
-@keyframes glow {
+@keyframes glow1 {
   0% {
     background-position: 0% 0;
-    width: 70%;
+    width: 75%;
   }
   50% {
     background-position: 200% 0;
-    width: 80%;
+    width: 85%;
   }
   100% {
     background-position: 0% 0;
-    width: 70%;
+    width: 75%;
   }
 }
+
+@keyframes glow2 {
+  0% {
+    background-position: 0% 0;
+    width: 85%;
+  }
+  50% {
+    background-position: 200% 0;
+    width: 95%;
+  }
+  100% {
+    background-position: 0% 0;
+    width: 85%;
+  }
+}
+
 
 .animate-bar1 {
   display: inline-block;
   position: relative;
-  width: 70%;
+  width: 75%;
   background: #EEAECA; background: linear-gradient(to right, #eeaecab3 0%, #94bbe9b3 40%, #eeaecab3 100%);
   background-size: 200% auto;
   transition: all 0.5s ease-in-out;
-  animation: glow 1s 0.5s linear forwards infinite;
+  animation: glow1 1s 0.5s linear forwards infinite;
 }
 
 .animate-bar2 {
@@ -61,12 +77,11 @@
   position: relative;
   top: -15%;
   padding: 0;
-  left: 12.5%;
-  width: 75%;
+  width: 85%;
   background: linear-gradient(to right, #94bbe9b3 0%, #eeaecab3 40%, #94bbe9b3 100%);
   background-size: 200% auto;
   transition: all 0.5s ease-in-out;
-  animation: glow 1s 1s linear forwards infinite;
+  animation: glow2 1s 1s linear forwards infinite;
 }
 
 .hide-card {
@@ -101,4 +116,10 @@
 .hourly { grid-area: hourly; }
 .current { grid-area: current; }
 .recents { grid-area: recents; }
+
+.aiBar {
+  transition: height 0.3s linear;
+  overflow: hidden;
 }
+}
+
