@@ -5,6 +5,7 @@ A modern, responsive weather application built with React and Vite that provides
 ## ✨ Features
 
 - **Current Weather Display**: Get up-to-date weather conditions including temperature, humidity, wind speed, and weather descriptions
+- **AI-Generated Weather Summary**: Instantly receive an AI-generated summary based on the latest weather data for any location
 - **Location Search**: Search for weather data by city name or location
 - **Geolocation Support**: Automatically detect user's location for instant weather updates
 - **Responsive Design**: Optimized for desktop, tablet, and mobile devices
@@ -217,8 +218,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🙏 Acknowledgments
 
-- Weather data provided by [API Provider Name]
-- Icons from [Icon Library Name]
+- Weather data provided by Visual Crossing
+- Icons from Icons8, MaterialUI, & Flaticon.
 - Built with React and Vite
 - Inspired by modern weather applications
 
