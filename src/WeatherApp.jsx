@@ -105,6 +105,9 @@ const fetchData = async (city, country) => {
             const response = await axios.get(`https://utony-weather-server.onrender.com/api/weather?city=${city}&country=${country}`);
             // Retrieve data from response.
             const jsonData = response.data;
+            // Remove the dialog message box if data is fetched before timeout.
+            clearTimeout(timeLimit);
+            setDialogMessage('');
             // Save the newly fetched data to localStorage with the city & country as key and the jsonData as the value.
             saveToLocalStorage(city, country, jsonData);
             console.log("The NEW response is", jsonData);
@@ -757,10 +760,10 @@ if (isError) {
 
         className='h-auto w-[100%] relative ' 
         id='body'>
-            {/** Conditionally displayed general dialog box */}
+            {/** Conditionally  displayed general dialog box for error and other user messages */}
             <div className="weather-app h-fit absolute z-50 grid place-self-center" id="dialog-box"
             >
-                <div className="error-message border border-zinc-400 bg-slate-50 relative grid place-self-center rounded place-content-center top-1/3 w-11/12" 
+                <div className="dialog-message border border-zinc-400 bg-slate-50 relative grid place-self-center rounded place-content-center top-1/3 w-11/12" 
                 style={{
                     top: dialogMessage ? '100%' : '-100%',
                     transition: 'top 0.5s ease-in-out',

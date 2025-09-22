@@ -27,11 +27,10 @@ const RecentSearches = forwardRef(
     },
     ref // Forwarded ref from parent
   ) => {
-    const [locationsData, setLocationsData] = useState(
-      JSON.parse(localStorage.getItem("storedLocations")) || []
-    );
+    const [locationsData, setLocationsData] = useState([]); 
     const [preferedKey, setPreferedKey] = useState('');
     const [fallBackKey, setFallBackKey] = useState('');
+    const [isLocationPinned, setIsLocationPinned] = useState(false);
     const { tabRef, recentsRef } = ref;
 
     let userPreferedLocation = localStorage.getItem("savedKey") || [];
@@ -77,51 +76,30 @@ const RecentSearches = forwardRef(
               !latestData.days?.[dayIndex]?.hours?.[indexHour]?.temp
             )
               return null;
+            let temp = defaultTempUnit(latestData.days[dayIndex].hours[indexHour].temp);
 
             return {
               key,
-              cachedData,
               location: key + " ",
-              temp: defaultTempUnit(latestData.days[dayIndex].hours[indexHour].temp),
+              temp,
               precipProb: latestData.days[dayIndex].hours[indexHour].precipprob,
               icon: `/GWeatherIcons/${latestData.days[dayIndex].hours[indexHour].icon}.png`,
             };
           })
           .filter(Boolean);
-        
+        console.log("SET the LOCATIONS DATA STATE with: ", locationsArray);
         setLocationsData(locationsArray);
+        localStorage.setItem("storedLocations", JSON.stringify(locationsArray));
+        console.log("INITIALIZED Recents STORED to localStorage");
+
       }
     }, [data]);
-    console.log("the RECENTLY SEARCHED locations & their data: ", locationsData);
-
-    const storedLocations = JSON.parse(localStorage.getItem("storedLocations")) || {}
-    console.log("the stored locations are: ", storedLocations);
-
-    useEffect(() => {
-      if (locationsData.length > 0 && locationsData.length <= 5) {
-        setLocationsData(storedLocations);
-      } else if (locationsData.length > 5) {
-        locationsData.pop();
-        console.log("Recents EXCEEDED, last search removed");
-        setLocationsData([...locationsData]);
-        localStorage.setItem("storedLocations", JSON.stringify(locationsData));
-      }
-    }, []); 
-
-    // Function to pin the selected location to the top of the list.
-    const pinLocation2Top = (fromI) => {
-      let selectedLocation = locationsData[fromI];
-      console.log("The Selected Location is: ", selectedLocation, " at index ", fromI);
-      locationsData[fromI] = locationsData[1];
-      locationsData[1] = selectedLocation;
-      console.log("The Selected Location : ", selectedLocation, " is NOW at index ", fromI);
-      console.log("The Rearranged Locations are: ", locationsData);
-      // Set the rearranged locations to state.
-      setLocationsData([...locationsData]);
-      // Log the rearranged locations to LocalStorage.
-      localStorage.setItem("storedLocations", JSON.stringify(locationsData));
-    }
-    const removeLocation = (pickedLocation) => {
+    //const storedLocations = (localStorage.getItem("storedLocations")) || {}
+    // console.log("the stored locations are: ", storedLocations );
+    let storedLocations = JSON.parse(localStorage.getItem("storedLocations")) || [];
+    console.log("the stored recent locations are: ", storedLocations );
+    
+        const removeLocation = (pickedLocation) => {
       const cachedData = JSON.parse(localStorage.getItem("weatherCache")) || {};
       delete cachedData[pickedLocation];
       localStorage.setItem("weatherCache", JSON.stringify(cachedData));
@@ -146,6 +124,26 @@ const RecentSearches = forwardRef(
         setPreferedKey("");
       }
     };
+
+    if (locationsData.length > 5) {
+        removeLocation(locationsData[locationsData.length - 1].key);
+        console.log("Recents EXCEEDED, last search removed");
+        setLocationsData([...locationsData]);
+        localStorage.setItem("storedLocations", JSON.stringify(locationsData));
+    } 
+    // Function to pin the selected location to the top of the list.
+    const pinLocation2Top = (fromI) => {
+      let selectedLocation = locationsData[fromI];
+      console.log("The Selected Location is: ", selectedLocation, " at index ", fromI);
+      locationsData[fromI] = locationsData[locationsData.length - 1];
+      locationsData[locationsData.length - 1] = selectedLocation;
+      console.log("The Selected Location : ", selectedLocation, " is NOW at index ", fromI);
+      console.log("The Rearranged Locations are: ", locationsData);
+      // Set the rearranged locations to state.
+      setLocationsData([...locationsData]);
+      // Log the rearranged locations to LocalStorage.
+      localStorage.setItem("storedLocations", JSON.stringify(locationsData));
+    }
 
     console.log('our currentKey now is? ', currentKey);
     console.log('our FallbackKey now is? ', fallBackKey);
@@ -234,7 +232,7 @@ const RecentSearches = forwardRef(
         <div className="desc md:text-[17px] text-lg flex bg-[#e5e5e5] md:bg-transparent w-full h-fit font-medium text-[#404C4F]">
           Recently Searched
         </div>
-        <div className="locations relative flex flex-col">
+        <div className="locations relative flex flex-col-reverse">
           
 
           {locationsData.length > 1 && locationsData.map(
@@ -312,7 +310,7 @@ const RecentSearches = forwardRef(
                   console.log("The PREFERRED KEY is ", preferedKey);
                   pinLocation2Top(i);
                   console.log(preferedKey);
-                  }}> <img loading="lazy" src={locationsData[1].key === location.trimEnd()  ? `fav-filled.png` : `fav-blank.png` } alt="" srcSet="" /> </span>
+                  }}> <img loading="lazy" src={locationsData[locationsData.length - 1].key === location.trimEnd()  ? `pin-filled.png` : `pin-blank.png` } alt="" srcSet="" /> </span>
                 </span>
              </div>
              </div>

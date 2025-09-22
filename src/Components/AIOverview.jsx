@@ -123,4 +123,4 @@ const AIOverview = ({ data, dayIndex, address, hour }) => {
         </div>
     );
 }
-export default AIOverview;
+export default AIOverview; 
